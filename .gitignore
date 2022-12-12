@@ -149,4 +149,19 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+**/target/
+**/logs/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
 # End of https://www.toptal.com/developers/gitignore/api/linux,intellij+all,windows,visualstudiocode

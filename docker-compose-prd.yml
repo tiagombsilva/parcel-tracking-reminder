@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: parcel-tracking-reminder-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=test
+      - POSTGRES_DB=parcel
+  backend:
+    container_name: parcel-tracking-reminder-backend-api
+    depends_on:
+      - db
+    build:
+      context: ./backend-api
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILE_ACTIVE=dev
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://parcel-tracking-reminder-db:5432/parcel
+      - SPRING_DATASOURCE_USERNAME=test
+      - SPRING_DATASOURCE_PASSWORD=1234
+    stdin_open: true
+    tty: true
+    volumes:
+      - ${PWD}/logs:/logs
+    command: "mvn spring-boot:run"
+    ports:
+      - "8080:8080"
+      - "5005:5005"
