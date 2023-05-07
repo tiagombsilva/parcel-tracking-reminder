@@ -1,10 +1,10 @@
-package com.eagle.backendApi;
+package com.eagle.parceltracking.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApiApplicationTests {
+class ApplicationTests {
 
 	@Test
 	void contextLoads() {
