@@ -1,4 +1,4 @@
-FROM openjdk:19-jdk-slim as build
+FROM openjdk:21-slim as build
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 RUN ls target/dependency/META-INF/
 
 #Prd
-FROM openjdk:19-jdk-slim as prd
+FROM openjdk:21-slim as prd
 ARG DEPENDENCY=/app/target/dependency
 
 COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
