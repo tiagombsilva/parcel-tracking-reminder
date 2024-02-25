@@ -7,4 +7,4 @@ echo "Starting Services"
 docker-compose -f docker-compose-dev.yml up -d
 
 echo "Attaching to API"
-docker logs -f parcel-tracking-reminder-backend-api
+docker logs -f backend-api

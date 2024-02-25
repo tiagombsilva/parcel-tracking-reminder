@@ -10,7 +10,7 @@
 ## Tech
 
 - [Spring-Boot] - Backend API
-- [Python] - Discord
+- [Rust] - Discord Bot
 - [Postgres] - Database
 
 ## Installation

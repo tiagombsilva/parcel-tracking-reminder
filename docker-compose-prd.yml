@@ -5,13 +5,13 @@ services:
     image: postgres:latest
     container_name: parcel-tracking-reminder-db
     ports:
-      - "5432:5432"
+      - "5432"
     environment:
       - POSTGRES_PASSWORD=1234
       - POSTGRES_USER=test
       - POSTGRES_DB=parcel
   backend:
-    container_name: parcel-tracking-reminder-backend-api
+    container_name: backend-api
     depends_on:
       - db
     build:
@@ -28,5 +28,5 @@ services:
       - ${PWD}/logs:/logs
     command: "mvn spring-boot:run"
     ports:
-      - "8080:8080"
-      - "5005:5005"
+      - "8080"
+      - "5005"
