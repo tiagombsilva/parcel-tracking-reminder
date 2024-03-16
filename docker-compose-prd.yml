@@ -16,7 +16,7 @@ services:
       - db
     build:
       context: ./backend-api
-      dockerfile: Dockerfile
+      dockerfile: DockerfileProd
     environment:
       - SPRING_PROFILE_ACTIVE=dev
       - SPRING_DATASOURCE_URL=jdbc:postgresql://parcel-tracking-reminder-db:5432/parcel

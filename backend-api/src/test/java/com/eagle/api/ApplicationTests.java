@@ -1,4 +1,4 @@
-package com.eagle.parceltracking.api;
+package com.eagle.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
