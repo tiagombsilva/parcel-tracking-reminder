@@ -1,6 +1,7 @@
 package com.eagle.api.parcel;
 
 import com.eagle.api.account.Account;
+import com.eagle.api.website.Website;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,19 +26,20 @@ import java.sql.Timestamp;
 public class Parcel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	long id;
+	private long id;
 	@Column(name = "tracking")
-	String tracking;
+	private String tracking;
 	@Column(name = "name")
 	@Nullable
-	String name;
+	private String name;
 	@Column(name = "last_update")
-	Timestamp lastUpdate;
+	private Timestamp lastUpdate;
 	@Column(name = "domain")
+	@ManyToOne
 	@Nullable
-	String domain;
-	String state;
+	private Website website;
+	private String state;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "account_id")
-	Account account;
+	private Account account;
 }
