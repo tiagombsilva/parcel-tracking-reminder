@@ -13,11 +13,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "parcel")
 public class Parcel {
@@ -38,10 +40,4 @@ public class Parcel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "account_id")
 	Account account;
-
-	@Override
-	public String toString() {
-		return String.format("Parcel{id=%d, tracking=%s, name=%s, lastUpdate=%s, state=%s, account=%s}",
-				id, tracking, name, lastUpdate, state, account);
-	}
 }

@@ -12,11 +12,13 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Set;
 
 @Getter
 @Setter
+@ToString
 @Entity
 @Table(name = "account")
 public class Account{
@@ -28,9 +30,4 @@ public class Account{
 		String name;
 		@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 		Set<Parcel> parcels;
-
-	@Override
-	public String toString() {
-		return String.format("User{id=%d, name=%s, parcels=%s}", id, name, parcels);
-	}
 }
