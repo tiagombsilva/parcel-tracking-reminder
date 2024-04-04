@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -39,13 +37,10 @@ public class ParcelController {
 	}
 
 	@PostMapping("/parcel")
-	public ResponseEntity<Parcel> newParcel(@RequestBody Parcel parcel) {
-		final Optional<Parcel> savedParcel = service.saveParcel(parcel);
-		final UriComponentsBuilder location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}");
-		return savedParcel.map(p -> {
-			var uri = location.buildAndExpand(savedParcel.get()).toUri();
-			return ResponseEntity.created(uri).body(p);
-		}).orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+	public ResponseEntity<Parcel> saveOrUpdate(@RequestBody Parcel parcel) {
+		final Optional<Parcel> savedParcel = service.saveOrUpdateParcel(parcel);
+		return savedParcel.map(ResponseEntity::ok)
+				.orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
 	}
 
 	@DeleteMapping("/parcel/{id}")

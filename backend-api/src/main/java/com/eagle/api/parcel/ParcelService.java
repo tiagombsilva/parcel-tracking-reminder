@@ -24,7 +24,7 @@ public class ParcelService {
 		return repository.findById(parcelId);
 	}
 
-	public Optional<Parcel> saveParcel(final Parcel parcel) {
+	public Optional<Parcel> saveOrUpdateParcel(final Parcel parcel) {
 		return Optional.of(repository.save(parcel));
 	}
 
