@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.Optional;
 
+@RestController
+@RequestMapping("/api/${api.version}/account")
 public class AccountController {
 
     private final AccountService service;
@@ -22,31 +26,31 @@ public class AccountController {
         this.service = service;
     }
 
-    @GetMapping("/accounts")
-    public ResponseEntity<Collection<Account>> getAllParcels() {
+    @GetMapping()
+    public ResponseEntity<Collection<Account>> getAllAccounts() {
         return ResponseEntity.ok(service.getAllAccounts());
     }
 
-    @GetMapping("/account/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Account> getParcelById(@PathParam("id") Long parcelId) {
         return service.getAccount(parcelId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PostMapping("/account")
+    @PostMapping()
     public ResponseEntity<Account> saveOrUpdate(@RequestBody Account account) {
         final Optional<Account> savedAccount = service.saveOrUpdateAccount(account);
         return savedAccount.map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    @DeleteMapping("/account/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Account> deleteParcel(@PathParam("id") Long accountId) {
         return service.deleteAccount(accountId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/account/{id}/parcels")
+    @GetMapping("{id}/parcels")
     public ResponseEntity<Collection<Parcel>> getAllParcelsFromAccount(@PathParam("id") Long accountId) {
         return service.getAllParcelsFromAccount(accountId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
