@@ -1,6 +1,5 @@
 package com.eagle.api.account;
 
-import com.eagle.api.parcel.Parcel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +20,8 @@ public class AccountService {
         return repository.findAll();
     }
 
-    public Optional<Account> getAccount(final Long parcelId) {
-        return repository.findById(parcelId);
+    public Optional<Account> getAccount(final Long accountId) {
+        return repository.findById(accountId);
     }
 
     public Optional<Account> saveOrUpdateAccount(final Account account) {
@@ -33,9 +32,5 @@ public class AccountService {
         final Optional<Account> AccountOptional = repository.findById(accountId);
         AccountOptional.ifPresent(p -> repository.deleteById(accountId));
         return AccountOptional;
-    }
-
-    public Optional<Collection<Parcel>> getAllParcelsFromAccount(final Long accountId) {
-        return repository.findById(accountId).map(Account::getParcels);
     }
 }

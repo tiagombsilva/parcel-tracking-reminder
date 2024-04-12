@@ -1,12 +1,11 @@
 package com.eagle.api.account;
 
-import com.eagle.api.parcel.Parcel;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +31,7 @@ public class AccountController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Account> getParcelById(@PathParam("id") Long parcelId) {
+    public ResponseEntity<Account> getParcelById(@PathVariable("id") Long parcelId) {
         return service.getAccount(parcelId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -45,14 +44,8 @@ public class AccountController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Account> deleteParcel(@PathParam("id") Long accountId) {
+    public ResponseEntity<Account> deleteParcel(@PathVariable("id") Long accountId) {
         return service.deleteAccount(accountId).map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
-    @GetMapping("{id}/parcels")
-    public ResponseEntity<Collection<Parcel>> getAllParcelsFromAccount(@PathParam("id") Long accountId) {
-        return service.getAllParcelsFromAccount(accountId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

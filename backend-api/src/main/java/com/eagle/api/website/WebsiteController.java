@@ -1,11 +1,11 @@
 package com.eagle.api.website;
 
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +31,7 @@ public class WebsiteController {
     }
 
     @GetMapping("{domain}")
-    public ResponseEntity<Website> getWebsiteById(@PathParam("domain") String domain) {
+    public ResponseEntity<Website> getWebsiteById(@PathVariable("domain") String domain) {
         return service.getWebsite(domain).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
@@ -44,7 +44,7 @@ public class WebsiteController {
     }
 
     @DeleteMapping("{domain}")
-    public ResponseEntity<Website> deleteParcel(@PathParam("domain") String domain) {
+    public ResponseEntity<Website> deleteParcel(@PathVariable("domain") String domain) {
         return service.deleteWebsite(domain).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
