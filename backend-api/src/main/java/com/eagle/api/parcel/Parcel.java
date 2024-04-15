@@ -40,9 +40,9 @@ public class Parcel {
     private String name;
     @Column(name = "last_update")
     private Timestamp lastUpdate;
-    @Column(name = "domain")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @Nullable
+    @JoinColumn(name = "website_domain")
     private Website website;
     private String state;
     @ManyToOne(fetch = FetchType.LAZY)
