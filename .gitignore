@@ -166,3 +166,4 @@ $RECYCLE.BIN/
 .sts4-cache
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,intellij+all,windows,visualstudiocode
+.idea/codeStyles/codeStyleConfig.xml
