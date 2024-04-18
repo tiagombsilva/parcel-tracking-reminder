@@ -86,7 +86,12 @@ public class ParcelControllerTests {
     }
 
     private Parcel getDummyParcel(long parcelId, final Account account) {
-        return Parcel.builder().id(1L).name("Dummy parcel")
+        return Parcel.builder()
+                .uuid(1L)
+                .name("Dummy parcel")
+                .trackingId("123123")
+                .origin("PT")
+                .destination("PT")
                 .lastUpdate(Timestamp.from(Instant.now()))
                 .account(account)
                 .build();
