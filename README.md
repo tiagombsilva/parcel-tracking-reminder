@@ -11,6 +11,7 @@
 
 - [Spring-Boot] - Backend API
 - [Rust] - Discord Bot
+- [Go] - Consuming Parcels API
 - [Postgres] - Database
 
 ## Installation
