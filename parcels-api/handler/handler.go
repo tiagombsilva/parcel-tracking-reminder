@@ -10,22 +10,22 @@ import (
 )
 
 type State struct {
-	Date    string `json: "date"`
-	Carrier string `json: "carrier"`
-	Status  string `json: "status"`
+	Date    string `json:"date"`
+	Carrier string `json:"carrier"`
+	Status  string `json:"status"`
 }
 
 type Shipments struct {
-	OriginCode      string `json: "originCode"`
-	DestinationCode string `json: "destinationCode"`
-	Status          string `json: "status"`
-	TrackingId      string `json: "trackingId"`
-	LastState       State  `json: "lastState"`
+	OriginCode      string `json:"originCode"`
+	DestinationCode string `json:"destinationCode"`
+	Status          string `json:"status"`
+	TrackingId      string `json:"trackingId"`
+	LastState       State  `json:"lastState"`
 }
 
 type Parcel struct {
-	UUID      string      `json: "uuid"`
-	Shipments []Shipments `json: "shipments"`
+	UUID      string      `json:"uuid"`
+	Shipments []Shipments `json:"shipments"`
 }
 
 func GetParcel(uuid string) *Parcel {
