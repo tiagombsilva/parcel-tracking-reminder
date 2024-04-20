@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"parcelsApi/handler"
+	"strings"
 )
 
 func main() {
-	var token = os.Getenv("parcelsApiToken")
-	fmt.Println("my token is", token)
+	response := handler.GetParcel("6623e161af2ead75e45f42b4")
+	fmt.Println(strings.TrimSpace(response.UUID))
 }
