@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"parcelsApi/handler"
+	"parcelsApi/external"
 	"parcelsApi/service"
 )
 
 func main() {
-	parcelHandler := handler.NewParcelHandler()
+	parcelHandler := external.NewParcelHandler()
 	parcelService := service.NewParcelService(parcelHandler)
-	parcelReq := &handler.Request{
+	parcelReq := &external.Request{
 		TrackingId:  "31857080137424",
 		DestCountry: "Portugal",
 		Zipcode:     "9760-180",

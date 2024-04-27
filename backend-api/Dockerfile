@@ -30,4 +30,4 @@ ENTRYPOINT ["java","-jar","parcel-tracking-api.jar"]
 
 #EXPOSE 8080
 
-#ENTRYPOINT ["java", "-cp", "app:app/lib/*","com.eagle.api.Application"]
+#ENTRYPOINT ["java", "-cp", "app:app/lib/*","com.eagle.Application"]

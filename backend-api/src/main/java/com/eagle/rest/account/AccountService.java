@@ -1,4 +1,4 @@
-package com.eagle.api.account;
+package com.eagle.rest.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

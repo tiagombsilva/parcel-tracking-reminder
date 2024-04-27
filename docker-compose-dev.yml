@@ -30,4 +30,5 @@ services:
     command: "mvn spring-boot:run"
     ports:
       - "8080:8080"
+      - "9090:9090"
       - "5005:5005"

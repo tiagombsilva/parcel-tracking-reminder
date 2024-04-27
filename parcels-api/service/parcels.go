@@ -3,11 +3,11 @@ package service
 import (
 	"encoding/json"
 	"log"
-	"parcelsApi/handler"
+	"parcelsApi/external"
 )
 
 type ParcelService struct {
-	handler handler.Handler
+	handler external.Handler
 }
 
 type State struct {
@@ -24,16 +24,16 @@ type Shipments struct {
 	LastState       State  `json:"lastState"`
 }
 
-type Parcel struct {
+type Tracking struct {
 	UUID      string      `json:"uuid"`
 	Shipments []Shipments `json:"shipments"`
 }
 
-func NewParcelService(handler handler.Handler) *ParcelService {
+func NewParcelService(handler external.Handler) *ParcelService {
 	return &ParcelService{handler}
 }
 
-func (ps *ParcelService) GetParcel(parcelReq *handler.Request) *Parcel {
+func (ps *ParcelService) GetParcel(parcelReq *external.Request) *Tracking {
 	jsonRes, err := ps.handler.PostParcel(parcelReq)
 	if err != nil {
 		log.Panic("failed to fetch Parcel")
@@ -42,8 +42,8 @@ func (ps *ParcelService) GetParcel(parcelReq *handler.Request) *Parcel {
 	return getParcelFromJson(jsonRes)
 }
 
-func getParcelFromJson(response []byte) *Parcel {
-	var parcelJsons Parcel
+func getParcelFromJson(response []byte) *Tracking {
+	var parcelJsons Tracking
 	json.Unmarshal(response, &parcelJsons)
 	return &parcelJsons
 }

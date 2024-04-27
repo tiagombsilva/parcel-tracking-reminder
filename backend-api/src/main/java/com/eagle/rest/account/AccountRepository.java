@@ -1,4 +1,4 @@
-package com.eagle.api.account;
+package com.eagle.rest.account;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

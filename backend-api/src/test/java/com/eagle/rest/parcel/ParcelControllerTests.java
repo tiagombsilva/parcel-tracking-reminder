@@ -1,6 +1,6 @@
-package com.eagle.api.parcel;
+package com.eagle.rest.parcel;
 
-import com.eagle.api.account.Account;
+import com.eagle.rest.account.Account;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

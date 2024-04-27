@@ -1,6 +1,6 @@
-package com.eagle.api.parcel;
+package com.eagle.rest.parcel;
 
-import com.eagle.api.account.Account;
+import com.eagle.rest.account.Account;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

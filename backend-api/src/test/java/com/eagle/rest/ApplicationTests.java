@@ -1,4 +1,4 @@
-package com.eagle.api;
+package com.eagle.rest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,4 +1,4 @@
-package com.eagle.api.parcel;
+package com.eagle.rest.account;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,37 +15,37 @@ import java.util.Collection;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/${api.version}/parcel")
-public class ParcelController {
+@RequestMapping("/api/${api.version}/account")
+public class AccountController {
 
-    private final ParcelService service;
+    private final AccountService service;
 
     @Autowired
-    public ParcelController(final ParcelService service) {
+    public AccountController(final AccountService service) {
         this.service = service;
     }
 
     @GetMapping()
-    public ResponseEntity<Collection<Parcel>> getAllParcels() {
-        return ResponseEntity.ok(service.getAllParcels());
+    public ResponseEntity<Collection<Account>> getAllAccounts() {
+        return ResponseEntity.ok(service.getAllAccounts());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Parcel> getParcelById(@PathVariable("id") Long parcelId) {
-        return service.getParcel(parcelId).map(ResponseEntity::ok)
+    public ResponseEntity<Account> getParcelById(@PathVariable("id") Long parcelId) {
+        return service.getAccount(parcelId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping()
-    public ResponseEntity<Parcel> saveOrUpdate(@RequestBody Parcel parcel) {
-        final Optional<Parcel> savedParcel = service.saveOrUpdateParcel(parcel);
-        return savedParcel.map(ResponseEntity::ok)
+    public ResponseEntity<Account> saveOrUpdate(@RequestBody Account account) {
+        final Optional<Account> savedAccount = service.saveOrUpdateAccount(account);
+        return savedAccount.map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Parcel> deleteParcel(@PathVariable("id") Long parcelId) {
-        return service.deleteParcel(parcelId).map(ResponseEntity::ok)
+    public ResponseEntity<Account> deleteParcel(@PathVariable("id") Long accountId) {
+        return service.deleteAccount(accountId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

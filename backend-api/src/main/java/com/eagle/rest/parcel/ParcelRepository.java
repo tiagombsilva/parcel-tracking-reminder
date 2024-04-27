@@ -1,4 +1,4 @@
-package com.eagle.api.parcel;
+package com.eagle.rest.parcel;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

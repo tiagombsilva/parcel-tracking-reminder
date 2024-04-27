@@ -1,4 +1,4 @@
-package com.eagle.api.account;
+package com.eagle.rest.account;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
