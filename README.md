@@ -9,10 +9,16 @@
 
 ## Tech
 
-- [Spring-Boot] - Backend API
+- [Spring-Boot] - Backend REST API (Browser/Discord Bot)
+- [Spring-Boot] - Backend gRPC API (Between Consumer Go and SpringBoot)
+- [Go] - Consumer of Parcels API
 - [Rust] - Discord Bot
 - [Postgres] - Database
 
 ## Installation
 
 docker-compose up
+
+## External API used for consumer
+
+https://parcelsapp.com/
