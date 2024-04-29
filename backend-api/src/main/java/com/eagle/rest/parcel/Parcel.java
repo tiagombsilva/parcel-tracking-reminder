@@ -29,7 +29,7 @@ import java.sql.Timestamp;
 public class Parcel {
     @Id
     private long uuid;
-    private String trackingId;
+    private String trackingCode;
     @Nullable
     private String name;
     private String origin;

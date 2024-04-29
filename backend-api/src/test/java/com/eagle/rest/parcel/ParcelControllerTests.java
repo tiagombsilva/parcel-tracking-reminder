@@ -89,7 +89,7 @@ public class ParcelControllerTests {
         return Parcel.builder()
                 .uuid(1L)
                 .name("Dummy parcel")
-                .trackingId("123123")
+                .trackingCode("123123")
                 .origin("PT")
                 .destination("PT")
                 .lastUpdate(Timestamp.from(Instant.now()))

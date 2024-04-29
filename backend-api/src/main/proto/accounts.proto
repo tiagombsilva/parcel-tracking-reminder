@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package com.eagle.grpc.accounts;
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "com.eagle.grpc.accounts.lib";
+option java_outer_classname = "AccountsProto";
+
+service Accounts {
+  rpc GetAccounts(google.protobuf.Empty) returns (AccountResponse){}
+  rpc GetAccountById(AccountReq) returns (AccountResponse){}
+}
+
+message AccountReq {
+  int64 id = 1;
+}
+
+message AccountResponse {
+  int64 id = 1;
+  string discordId = 2;
+  string name = 3;
+}

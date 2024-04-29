@@ -33,4 +33,8 @@ public class ParcelService {
         parcelOptional.ifPresent(p -> repository.deleteById(parcelId));
         return parcelOptional;
     }
+
+    public Optional<Parcel> getParcelByTrackingCode(final String trackingCode) {
+        return repository.findByTrackingCode(trackingCode);
+    }
 }

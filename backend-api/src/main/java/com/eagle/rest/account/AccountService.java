@@ -33,4 +33,8 @@ public class AccountService {
         AccountOptional.ifPresent(p -> repository.deleteById(accountId));
         return AccountOptional;
     }
+
+    public Optional<Account> getAccountById(final Long accountId) {
+        return repository.findById(accountId);
+    }
 }

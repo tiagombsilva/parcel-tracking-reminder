@@ -9,13 +9,17 @@ option java_package = "com.eagle.grpc.parcels.lib";
 option java_outer_classname = "ParcelsProto";
 
 service Parcels {
-  rpc GetParcels(google.protobuf.Empty) returns (ParcelsResponse){
-  }
+  rpc GetParcels(google.protobuf.Empty) returns (ParcelsResponse){}
+  rpc getParcelByTrackingCode(ParcelReq) returns (ParcelsResponse){}
+}
+
+message ParcelReq {
+  string trackingCode = 1;
 }
 
 message ParcelsResponse {
   int64 uuid = 1;
-  string trackingId = 2;
+  string trackingCode = 2;
   string name = 3;
   string origin = 4;
   string destination = 9;
