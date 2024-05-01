@@ -1,13 +1,12 @@
-package service
+package external
 
 import (
 	"encoding/json"
 	"log"
-	"parcelsApi/external"
 )
 
 type ParcelService struct {
-	handler external.Handler
+	handler Handler
 }
 
 type State struct {
@@ -29,11 +28,11 @@ type Tracking struct {
 	Shipments []Shipments `json:"shipments"`
 }
 
-func NewParcelService(handler external.Handler) *ParcelService {
+func NewParcelService(handler Handler) *ParcelService {
 	return &ParcelService{handler}
 }
 
-func (ps *ParcelService) GetParcel(parcelReq *external.Request) *Tracking {
+func (ps *ParcelService) GetParcel(parcelReq *Request) *Tracking {
 	jsonRes, err := ps.handler.PostParcel(parcelReq)
 	if err != nil {
 		log.Panic("failed to fetch Parcel")
