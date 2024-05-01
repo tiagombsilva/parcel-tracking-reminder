@@ -1,12 +1,13 @@
 syntax = "proto3";
 
-package com.eagle.grpc.accounts;
+package grpc.accounts;
 
 import "google/protobuf/empty.proto";
 
 option java_multiple_files = true;
 option java_package = "com.eagle.grpc.accounts.lib";
 option java_outer_classname = "AccountsProto";
+option go_package = "common/accounts";
 
 service Accounts {
   rpc GetAccounts(google.protobuf.Empty) returns (AccountResponse){}

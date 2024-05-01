@@ -26,11 +26,11 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
             ParcelsResponse response = ParcelsResponse.newBuilder()
                     .setUuid(parcel.getUuid())
                     .setName(parcel.getName())
-                    .setAccountId(parcel.getAccount().getId())
                     .setDestination(parcel.getDestination())
                     .setLastUpdate(parcel.getLastUpdate().toString())
                     .setOrigin(parcel.getOrigin())
                     .setTrackingCode(parcel.getTrackingCode())
+                    .setStatus(parcel.getStatus())
                     .build();
             responseObserver.onNext(response);
         }
@@ -45,11 +45,11 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
             ParcelsResponse response = ParcelsResponse.newBuilder()
                     .setUuid(parcel.getUuid())
                     .setName(parcel.getName())
-                    .setAccountId(parcel.getAccount().getId())
                     .setDestination(parcel.getDestination())
                     .setLastUpdate(parcel.getLastUpdate().toString())
                     .setOrigin(parcel.getOrigin())
                     .setTrackingCode(parcel.getTrackingCode())
+                    .setStatus(parcel.getStatus())
                     .build();
             responseObserver.onNext(response);
         }

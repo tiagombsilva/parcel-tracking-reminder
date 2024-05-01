@@ -1,16 +1,17 @@
 syntax = "proto3";
 
-package com.eagle.grpc.parcels;
+package grpc.parcels;
 
 import "google/protobuf/empty.proto";
 
 option java_multiple_files = true;
 option java_package = "com.eagle.grpc.parcels.lib";
 option java_outer_classname = "ParcelsProto";
+option go_package = "common/parcels";
 
 service Parcels {
   rpc GetParcels(google.protobuf.Empty) returns (ParcelsResponse){}
-  rpc getParcelByTrackingCode(ParcelReq) returns (ParcelsResponse){}
+  rpc GetParcelByTrackingCode(ParcelReq) returns (ParcelsResponse){}
 }
 
 message ParcelReq {
@@ -22,8 +23,7 @@ message ParcelsResponse {
   string trackingCode = 2;
   string name = 3;
   string origin = 4;
-  string destination = 9;
+  string destination = 5;
   string lastUpdate = 6;
   string status = 7;
-  int64 accountId = 8;
 }
