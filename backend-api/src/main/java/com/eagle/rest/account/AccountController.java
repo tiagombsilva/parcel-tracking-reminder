@@ -35,12 +35,6 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Account> getParcelById(@PathVariable("id") Long parcelId) {
-        return accountService.getAccount(parcelId).map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
-
     @GetMapping("{id}/parcels")
     public ResponseEntity<Set<Parcel>> getAccountParcels(@PathVariable("id") Long accountId) {
         final Optional<Account> optionalAccount = accountService.getAccountById(accountId);
@@ -65,14 +59,14 @@ public class AccountController {
     }
 
     @PostMapping()
-    public ResponseEntity<Account> saveOrUpdate(@RequestBody Account account) {
+    public ResponseEntity<Account> saveOrUpdateAccount(@RequestBody Account account) {
         final Optional<Account> savedAccount = accountService.saveOrUpdateAccount(account);
         return savedAccount.map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Account> deleteParcel(@PathVariable("id") Long accountId) {
+    public ResponseEntity<Account> deleteAccount(@PathVariable("id") Long accountId) {
         return accountService.deleteAccount(accountId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

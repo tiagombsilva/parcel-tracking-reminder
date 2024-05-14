@@ -4,15 +4,21 @@ import com.eagle.grpc.accounts.lib.AccountReq;
 import com.eagle.grpc.accounts.lib.AccountResponse;
 import com.eagle.grpc.accounts.lib.AccountsGrpc;
 import com.eagle.rest.account.AccountService;
+import com.eagle.rest.parcel.Parcel;
+import com.eagle.rest.parcel.ParcelService;
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class GrpcAccountService extends AccountsGrpc.AccountsImplBase {
 
     private final AccountService accountService;
+    private final ParcelService parcelService;
 
-    public GrpcAccountService(final AccountService accountService) {
+    @Autowired
+    public GrpcAccountService(final AccountService accountService, final ParcelService parcelService) {
         this.accountService = accountService;
+        this.parcelService = parcelService;
     }
 
     @Override
