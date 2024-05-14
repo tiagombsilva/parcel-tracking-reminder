@@ -26,6 +26,7 @@ type Shipments struct {
 type Tracking struct {
 	UUID      string      `json:"uuid"`
 	Shipments []Shipments `json:"shipments"`
+	Done      bool        `json:"done"`
 }
 
 func NewParcelService(handler Handler) *ParcelService {
