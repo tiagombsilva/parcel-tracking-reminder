@@ -25,5 +25,5 @@ message ParcelsResponse {
   string origin = 4;
   string destination = 5;
   string lastUpdate = 6;
-  string status = 7;
+  bool done = 7;
 }

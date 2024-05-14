@@ -20,6 +20,10 @@ public class ParcelService {
         return repository.findAll();
     }
 
+    public Collection<Parcel> getAllParcelsInProgress() {
+        return repository.getInProgressParcels();
+    }
+
     public Optional<Parcel> getParcel(final Long parcelId) {
         return repository.findById(parcelId);
     }

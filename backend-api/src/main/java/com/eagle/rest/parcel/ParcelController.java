@@ -30,6 +30,11 @@ public class ParcelController {
         return ResponseEntity.ok(service.getAllParcels());
     }
 
+    @GetMapping("/inProgress")
+    public ResponseEntity<Collection<Parcel>> getAllParcelsInProgress() {
+        return ResponseEntity.ok(service.getAllParcelsInProgress());
+    }
+
     @GetMapping("{id}")
     public ResponseEntity<Parcel> getParcelById(@PathVariable("id") Long parcelId) {
         return service.getParcel(parcelId).map(ResponseEntity::ok)

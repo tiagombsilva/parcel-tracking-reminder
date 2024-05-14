@@ -1,11 +1,7 @@
 package com.eagle.rest.parcel;
 
 import com.eagle.rest.account.Account;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,7 +37,7 @@ public class Parcel {
     private String destination;
     @Column(name = "last_update")
     private Timestamp lastUpdate;
-    private String status;
+    private boolean done;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     @JsonIgnore
