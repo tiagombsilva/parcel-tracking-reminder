@@ -14,7 +14,6 @@ type Job interface {
 }
 
 type JobImpl struct {
-	grpcAddress   *string
 	parcelService external.ParcelService
 }
 
