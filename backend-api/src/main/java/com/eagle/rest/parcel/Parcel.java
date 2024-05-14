@@ -37,7 +37,8 @@ public class Parcel {
     private String destination;
     @Column(name = "last_update")
     private Timestamp lastUpdate;
-    private boolean done;
+    private String status;
+    private boolean isDone;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     @JsonIgnore

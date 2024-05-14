@@ -30,7 +30,8 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
                     .setLastUpdate(parcel.getLastUpdate().toString())
                     .setOrigin(parcel.getOrigin())
                     .setTrackingCode(parcel.getTrackingCode())
-                    .setDone(parcel.isDone())
+                    .setStatus(parcel.getStatus())
+                    .setIsDone(parcel.isDone())
                     .build();
             responseObserver.onNext(response);
         }
@@ -49,7 +50,8 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
                     .setLastUpdate(parcel.getLastUpdate().toString())
                     .setOrigin(parcel.getOrigin())
                     .setTrackingCode(parcel.getTrackingCode())
-                    .setDone(parcel.isDone())
+                    .setStatus(parcel.getStatus())
+                    .setIsDone(parcel.isDone())
                     .build();
             responseObserver.onNext(response);
         }
