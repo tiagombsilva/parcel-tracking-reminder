@@ -3,28 +3,22 @@ package internal
 import (
 	"log"
 	"parcelsApi/external"
-	"parcelsApi/internal/common/parcels"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
-type Job interface {
-	Process()
-}
-
 type JobImpl struct {
-	parcelService external.ParcelService
+	parcelService *external.ParcelService
+	grpcService   ParcelGrpcService
 }
 
-func NewJobImpl(parcelService external.ParcelService) *JobImpl {
+func NewJobImpl(parcelService *external.ParcelService, grpcService ParcelGrpcService) *JobImpl {
 	return &JobImpl{
 		parcelService: parcelService,
+		grpcService:   grpcService,
 	}
 }
 
-func (job *JobImpl) Process(grpcService *ParcelGrpcServiceImpl) {
-	grpcResponse, err := grpcService.GetParcels()
+func (job *JobImpl) Run() {
+	grpcResponse, err := job.grpcService.GetAllParcels()
 	if err != nil {
 		log.Printf("Failed to to get data from GRPC")
 	}
@@ -37,13 +31,4 @@ func (job *JobImpl) Process(grpcService *ParcelGrpcServiceImpl) {
 	}
 	response := job.parcelService.GetParcel(parcelReq)
 	log.Printf("Received package: %s", response.Shipments[len(response.Shipments)-1].LastState)
-}
-
-func GetGrpcConnection(serverAddr *string) *ParcelGrpcServiceImpl {
-	conn, err := grpc.Dial(*serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatal("Failed to setup connection to Grpc server")
-	}
-	grpcConn := parcels.NewParcelsClient(conn)
-	return NewParcelGrpcServiceImpl(grpcConn)
 }

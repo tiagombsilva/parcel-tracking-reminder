@@ -21,6 +21,6 @@ func NewParcelGrpcServiceImpl(parcelService parcels.ParcelsClient) *ParcelGrpcSe
 	}
 }
 
-func (service *ParcelGrpcServiceImpl) GetParcels() (*parcels.ParcelsResponse, error) {
+func (service *ParcelGrpcServiceImpl) GetAllParcels() (*parcels.ParcelsResponse, error) {
 	return service.parcelService.GetParcels(context.Background(), &emptypb.Empty{})
 }
