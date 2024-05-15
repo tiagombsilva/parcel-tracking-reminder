@@ -6,7 +6,6 @@ import (
 	"parcelsApi/external"
 	"parcelsApi/internal"
 	"parcelsApi/internal/common/parcels"
-	"time"
 
 	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
@@ -28,9 +27,11 @@ func main() {
 	cron := cron.New()
 	cron.AddJob(*cronSchedule, job)
 	cron.Start()
-	for true {
-		time.Sleep(time.Second * 10)
-	}
+
+	// Use a channel to keep the main goroutine alive
+	// until an interrupt signal is received
+	interrupt := make(chan struct{})
+	<-interrupt
 }
 
 func GetGrpcConnection(serverAddr *string) internal.ParcelGrpcService {
