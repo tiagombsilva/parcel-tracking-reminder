@@ -32,7 +32,7 @@ public class AccountControllerTests {
 
     @Test
     public void getAllParcels() throws Exception {
-        final var account = getDummyAccount(1L);
+        final var account = getDummyAccount("discordId");
         given(service.getAllAccounts()).willReturn(List.of(account));
         final var parcelJson = getJson(account);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/account")).andDo(print())
@@ -42,8 +42,8 @@ public class AccountControllerTests {
 
     @Test
     public void getParcelById() throws Exception {
-        final var account = getDummyAccount(1L);
-        given(service.getAccount(1L)).willReturn(Optional.of(account));
+        final var account = getDummyAccount("discordId");
+        given(service.getAccount("discordId")).willReturn(Optional.of(account));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/account/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().json("%s".formatted(getJson(account))));
@@ -51,7 +51,7 @@ public class AccountControllerTests {
 
     @Test
     public void saveOrUpdate() throws Exception {
-        final var account = getDummyAccount(1L);
+        final var account = getDummyAccount("discordId");
         final var parcelJson = getJson(account);
         given(service.saveOrUpdateAccount(any())).willReturn(Optional.of(account));
         mockMvc.perform(post("/api/v1/account")
@@ -63,8 +63,8 @@ public class AccountControllerTests {
 
     @Test
     public void deleteAccount() throws Exception {
-        final var account = getDummyAccount(1L);
-        given(service.deleteAccount(1L)).willReturn(Optional.of(account));
+        final var account = getDummyAccount("discordId");
+        given(service.deleteAccount("discordId")).willReturn(Optional.of(account));
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/account/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().json("%s".formatted(getJson(account))));
@@ -74,7 +74,7 @@ public class AccountControllerTests {
         return mapper.writeValueAsString(parcel);
     }
 
-    private Account getDummyAccount(long accountId) {
-        return Account.builder().id(1L).name("dummy account").build();
+    private Account getDummyAccount(String discordId) {
+        return Account.builder().discordId(discordId).name("dummy account").build();
     }
 }

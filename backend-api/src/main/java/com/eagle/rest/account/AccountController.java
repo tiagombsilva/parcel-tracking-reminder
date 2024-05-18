@@ -1,7 +1,6 @@
 package com.eagle.rest.account;
 
 import com.eagle.rest.parcel.Parcel;
-import com.eagle.rest.parcel.ParcelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/${api.version}/account")
 public class AccountController {
 
     private final AccountService accountService;
-    private final ParcelService parcelService;
 
     @Autowired
-    public AccountController(final AccountService accountService, final ParcelService parcelService) {
+    public AccountController(final AccountService accountService) {
         this.accountService = accountService;
-        this.parcelService = parcelService;
     }
 
     @GetMapping()
@@ -35,27 +31,16 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
-    @GetMapping("{id}/parcels")
-    public ResponseEntity<Set<Parcel>> getAccountParcels(@PathVariable("id") Long accountId) {
-        final Optional<Account> optionalAccount = accountService.getAccountById(accountId);
-        return optionalAccount
-                .map(Account::getParcels)
-                .map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    @GetMapping("{discordId}/parcels")
+    public ResponseEntity<Collection<Parcel>> getAccountParcels(@PathVariable("discordId") String discordId) {
+        return ResponseEntity.ok(accountService.getAccountParcels(discordId));
     }
 
-    @PostMapping("{id}/parcel")
-    public ResponseEntity<Parcel> saveOrUpdateParcel(@PathVariable("id") Long accountId,
+    @PostMapping("{discordId}/parcel")
+    public ResponseEntity<Parcel> saveOrUpdateParcel(@PathVariable("discordId") String discordId,
                                                      @RequestBody Parcel parcel) {
-        final Optional<Account> optionalAccount = accountService.getAccountById(accountId);
-        parcelService.saveOrUpdateParcel(parcel);
-        if (optionalAccount.isPresent()) {
-            var acc = optionalAccount.get();
-            acc.getParcels().add(parcel);
-            accountService.saveOrUpdateAccount(acc);
-            return ResponseEntity.ok(parcel);
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return accountService.saveOrUpdateParcel(discordId, parcel).map(ResponseEntity::ok)
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping()
@@ -65,9 +50,9 @@ public class AccountController {
                 .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Account> deleteAccount(@PathVariable("id") Long accountId) {
-        return accountService.deleteAccount(accountId).map(ResponseEntity::ok)
+    @DeleteMapping("{discordId}")
+    public ResponseEntity<Account> deleteAccount(@PathVariable("discordId") String discordId) {
+        return accountService.deleteAccount(discordId).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

@@ -10,16 +10,45 @@ option java_outer_classname = "AccountsProto";
 option go_package = "common/accounts";
 
 service Accounts {
-  rpc GetAccounts(google.protobuf.Empty) returns (AccountResponse){}
-  rpc GetAccountById(AccountReq) returns (AccountResponse){}
+  rpc GetAccounts(google.protobuf.Empty) returns (AccountMessage){}
+  rpc GetAccountByDiscordId(AccountReq) returns (AccountMessage){}
+  rpc SaveAccount(AccountMessage) returns (SaveAccountResponse) {}
+  rpc GetAccountParcels(AccountReq) returns (AccountParcelMessage){}
+  rpc SaveParcel(AccountSaveParcel) returns (SaveAccountResponse) {}
 }
 
 message AccountReq {
-  int64 id = 1;
+  string discordId = 1;
 }
 
-message AccountResponse {
-  int64 id = 1;
-  string discordId = 2;
+message AccountMessage {
+  string discordId = 1;
+  optional string name = 2;
+}
+
+message SaveAccountResponse {
+  bool isSaved = 1;
+}
+
+message AccountParcelMessage {
+  int64 uuid = 1;
+  string trackingCode = 2;
   string name = 3;
+  string origin = 4;
+  string destination = 5;
+  string lastUpdate = 6;
+  string status = 7;
+  bool isDone = 8;
+}
+
+message AccountSaveParcel {
+  string discordId = 1;
+  int64 uuid = 2;
+  optional string trackingCode = 3;
+  optional string name = 4;
+  optional string origin = 5;
+  optional string destination = 6;
+  optional string lastUpdate = 7;
+  optional string status = 8;
+  optional bool isDone = 9;
 }

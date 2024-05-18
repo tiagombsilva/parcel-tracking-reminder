@@ -35,8 +35,8 @@ public class ParcelControllerTests {
 
     @Test
     public void getAllParcels() throws Exception {
-        final var account = getDummyAccount(1L);
-        final var parcel = getDummyParcel(1L, account);
+        final var account = getDummyAccount("discordId");
+        final var parcel = getDummyParcel(account);
         given(service.getAllParcels()).willReturn(List.of(parcel));
         final var parcelJson = getJson(parcel);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/parcel")).andDo(print())
@@ -46,8 +46,8 @@ public class ParcelControllerTests {
 
     @Test
     public void getParcelById() throws Exception {
-        final var account = getDummyAccount(1L);
-        final var parcel = getDummyParcel(1L, account);
+        final var account = getDummyAccount("discordId");
+        final var parcel = getDummyParcel(account);
         given(service.getParcel(1L)).willReturn(Optional.of(parcel));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/parcel/{id}", 1L))
                 .andExpect(status().isOk())
@@ -56,8 +56,8 @@ public class ParcelControllerTests {
 
     @Test
     public void saveOrUpdate() throws Exception {
-        final var account = getDummyAccount(1L);
-        final var parcel = getDummyParcel(1L, account);
+        final var account = getDummyAccount("discordId");
+        final var parcel = getDummyParcel(account);
         final var parcelJson = getJson(parcel);
         given(service.saveOrUpdateParcel(any())).willReturn(Optional.of(parcel));
         mockMvc.perform(post("/api/v1/parcel")
@@ -69,8 +69,8 @@ public class ParcelControllerTests {
 
     @Test
     public void deleteParcel() throws Exception {
-        final var account = getDummyAccount(1L);
-        final var parcel = getDummyParcel(1L, account);
+        final var account = getDummyAccount("discordId");
+        final var parcel = getDummyParcel(account);
         given(service.deleteParcel(1L)).willReturn(Optional.of(parcel));
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/parcel/{id}", 1L))
                 .andExpect(status().isOk())
@@ -81,11 +81,11 @@ public class ParcelControllerTests {
         return mapper.writeValueAsString(parcel);
     }
 
-    private Account getDummyAccount(long accountId) {
-        return Account.builder().id(1L).name("dummy account").build();
+    private Account getDummyAccount(String discordId) {
+        return Account.builder().discordId(discordId).name("dummy account").build();
     }
 
-    private Parcel getDummyParcel(long parcelId, final Account account) {
+    private Parcel getDummyParcel(final Account account) {
         return Parcel.builder()
                 .uuid(1L)
                 .name("Dummy parcel")

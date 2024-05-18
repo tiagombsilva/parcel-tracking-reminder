@@ -38,9 +38,9 @@ public class Parcel {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
     private String status;
-    private boolean isDone;
+    private boolean done;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", referencedColumnName = "id")
+    @JoinColumn(name = "discord_id", referencedColumnName = "discord_id")
     @JsonIgnore
     private Account account;
 }

@@ -24,8 +24,8 @@ public class ParcelService {
         return repository.getInProgressParcels();
     }
 
-    public Optional<Parcel> getParcel(final Long parcelId) {
-        return repository.findById(parcelId);
+    public Optional<Parcel> getParcel(final Long uuid) {
+        return repository.findById(uuid);
     }
 
     public Optional<Parcel> saveOrUpdateParcel(final Parcel parcel) {

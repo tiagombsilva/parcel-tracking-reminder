@@ -22,8 +22,16 @@ func main() {
 	parcelHandler := external.NewParcelHandler()
 	parcelService := external.NewParcelService(parcelHandler)
 	grpcService := GetGrpcConnection(serverAddr)
-
 	job := internal.NewJobImpl(parcelService, grpcService)
+
+	parcelReq := &external.Request{
+		TrackingId:  "LV997747362CN",
+		DestCountry: "Portugal",
+		//Zipcode:     "9760-180",
+	}
+	latestState := parcelService.GetLatestParcelState(parcelReq)
+	log.Printf("package: %s", latestState)
+
 	cron := cron.New()
 	cron.AddJob(*cronSchedule, job)
 	cron.Start()

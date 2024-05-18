@@ -23,12 +23,4 @@ func (job *JobImpl) Run() {
 		log.Printf("Failed to to get data from GRPC")
 	}
 	log.Printf("Received from GRPC: %s", grpcResponse)
-
-	parcelReq := &external.Request{
-		TrackingId:  "1Z67CPT40409456025",
-		DestCountry: "Portugal",
-		//Zipcode:     "9760-180",
-	}
-	response := job.parcelService.GetParcel(parcelReq)
-	log.Printf("Received package: %s", response.Shipments[len(response.Shipments)-1].LastState)
 }

@@ -34,12 +34,18 @@ func NewParcelService(handler Handler) *ParcelService {
 }
 
 func (ps *ParcelService) GetParcel(parcelReq *Request) *Tracking {
+	log.Printf("Fetching parcel from external parcelsapp")
 	jsonRes, err := ps.handler.PostParcel(parcelReq)
 	if err != nil {
 		log.Panic("failed to fetch Parcel")
 		return nil
 	}
 	return getParcelFromJson(jsonRes)
+}
+
+func (ps *ParcelService) GetLatestParcelState(parcelReq *Request) *State {
+	response := ps.GetParcel(parcelReq)
+	return &response.Shipments[len(response.Shipments)-1].LastState
 }
 
 func getParcelFromJson(response []byte) *Tracking {

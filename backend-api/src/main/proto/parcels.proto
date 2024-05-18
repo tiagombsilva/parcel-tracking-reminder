@@ -10,21 +10,27 @@ option java_outer_classname = "ParcelsProto";
 option go_package = "common/parcels";
 
 service Parcels {
-  rpc GetParcels(google.protobuf.Empty) returns (ParcelsResponse){}
-  rpc GetParcelByTrackingCode(ParcelReq) returns (ParcelsResponse){}
+  rpc GetParcels(google.protobuf.Empty) returns (ParcelMessage){}
+  rpc GetParcelByTrackingCode(ParcelReq) returns (ParcelMessage){}
+  rpc GetParcelsInProgress(google.protobuf.Empty) returns (ParcelMessage){}
+  rpc SaveParcel(ParcelMessage) returns (SaveParcelMessage){}
 }
 
 message ParcelReq {
   string trackingCode = 1;
 }
 
-message ParcelsResponse {
+message ParcelMessage {
   int64 uuid = 1;
-  string trackingCode = 2;
-  string name = 3;
-  string origin = 4;
-  string destination = 5;
-  string lastUpdate = 6;
-  string status = 7;
-  bool isDone = 8;
+  optional string trackingCode = 2;
+  optional string name = 3;
+  optional string origin = 4;
+  optional string destination = 5;
+  optional string lastUpdate = 6;
+  optional string status = 7;
+  optional bool isDone = 8;
+}
+
+message SaveParcelMessage {
+  bool isSaved = 1;
 }

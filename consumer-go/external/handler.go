@@ -44,10 +44,10 @@ func (handler *ParcelHandler) PostParcel(reqParcels *Request) ([]byte, error) {
 	response, err := http.Post(base.String(), "application/json", bytes.NewBuffer(jsonReq))
 	if err == nil {
 		responseJson, _ := io.ReadAll(response.Body)
-		log.Println("response data: ", string(responseJson))
+		log.Println("Response data: ", string(responseJson))
 		return responseJson, nil
 	}
-	log.Println("failed fetching data")
+	log.Println("Failed fetching data")
 	return nil, err
 }
 
