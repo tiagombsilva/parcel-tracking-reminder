@@ -18,7 +18,9 @@ var (
 	parcelApiUrl = "https://parcelsapp.com/api/v3/shipments/tracking"
 )
 
-type ParcelHandler struct{}
+type ParcelHandler struct {
+	client *http.Client
+}
 
 type ParcelRequest struct {
 	Shipments []Request `json:"shipments"`
@@ -32,8 +34,11 @@ type Request struct {
 	Zipcode     string `json:"zipcode"`
 }
 
-func NewParcelHandler() *ParcelHandler {
-	return &ParcelHandler{}
+func NewParcelHandler(client *http.Client) *ParcelHandler {
+	if client == nil {
+		client = &http.Client{}
+	}
+	return &ParcelHandler{client: client}
 }
 
 func (handler *ParcelHandler) PostParcel(reqParcels *Request) ([]byte, error) {
@@ -41,7 +46,7 @@ func (handler *ParcelHandler) PostParcel(reqParcels *Request) ([]byte, error) {
 	base, _ := url.Parse(parcelApiUrl)
 	jsonReq, _ := json.Marshal(data)
 	log.Println("Sending post with body: ", data)
-	response, err := http.Post(base.String(), "application/json", bytes.NewBuffer(jsonReq))
+	response, err := handler.client.Post(base.String(), "application/json", bytes.NewBuffer(jsonReq))
 	if err == nil {
 		responseJson, _ := io.ReadAll(response.Body)
 		log.Println("Response data: ", string(responseJson))

@@ -19,7 +19,7 @@ var (
 
 func main() {
 	SetupFlags()
-	parcelHandler := external.NewParcelHandler()
+	parcelHandler := external.NewParcelHandler(nil)
 	parcelService := external.NewParcelService(parcelHandler)
 	grpcService := GetGrpcConnection(serverAddr)
 	job := internal.NewJobImpl(parcelService, grpcService)
