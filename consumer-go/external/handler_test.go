@@ -35,11 +35,12 @@ func TestHandlerPost(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"status":"success"}`))
 	}))
+
 	defer testServer.Close()
 
 	os.Setenv("parcelsApiToken", "test_api_key")
 
-	handler := NewParcelHandler(testServer.Client())
+	handler := NewParcelHandler(testServer.Client(), testServer.URL)
 
 	req := &Request{
 		TrackingId:  "123",
