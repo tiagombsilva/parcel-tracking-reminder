@@ -20,9 +20,9 @@ type ParcelHandler struct {
 }
 
 type ParcelRequest struct {
-	Shipments []Request `json:"shipments"`
-	Language  string    `json:"language"`
-	ApiKey    string    `json:"apiKey"`
+	Shipments Request `json:"shipments"`
+	Language  string  `json:"language"`
+	ApiKey    string  `json:"apiKey"`
 }
 
 type Request struct {
@@ -60,6 +60,6 @@ func getJsonReq(parcelReq *Request) *ParcelRequest {
 	return &ParcelRequest{
 		Language:  "en",
 		ApiKey:    os.Getenv("parcelsApiToken"),
-		Shipments: []Request{*parcelReq},
+		Shipments: *parcelReq,
 	}
 }
