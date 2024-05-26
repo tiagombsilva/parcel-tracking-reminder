@@ -8,19 +8,19 @@ import (
 )
 
 type ParcelGrpcService interface {
-	GetAllParcels() (*parcels.ParcelsResponse, error)
+	GetAllParcels() (parcels.Parcels_GetParcelsClient, error)
 }
 
 type ParcelGrpcServiceImpl struct {
-	parcelService parcels.ParcelsClient
+	parcelClient parcels.ParcelsClient
 }
 
-func NewParcelGrpcServiceImpl(parcelService parcels.ParcelsClient) *ParcelGrpcServiceImpl {
+func NewParcelGrpcServiceImpl(parcelClient parcels.ParcelsClient) *ParcelGrpcServiceImpl {
 	return &ParcelGrpcServiceImpl{
-		parcelService: parcelService,
+		parcelClient: parcelClient,
 	}
 }
 
-func (service *ParcelGrpcServiceImpl) GetAllParcels() (*parcels.ParcelsResponse, error) {
-	return service.parcelService.GetParcels(context.Background(), &emptypb.Empty{})
+func (service *ParcelGrpcServiceImpl) GetAllParcels() (parcels.Parcels_GetParcelsClient, error) {
+	return service.parcelClient.GetParcels(context.Background(), &emptypb.Empty{})
 }

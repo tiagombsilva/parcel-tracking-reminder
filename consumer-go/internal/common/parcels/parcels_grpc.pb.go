@@ -23,8 +23,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ParcelsClient interface {
-	GetParcels(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ParcelsResponse, error)
-	GetParcelByTrackingCode(ctx context.Context, in *ParcelReq, opts ...grpc.CallOption) (*ParcelsResponse, error)
+	GetParcels(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Parcels_GetParcelsClient, error)
+	GetParcelByTrackingCode(ctx context.Context, in *ParcelReq, opts ...grpc.CallOption) (*ParcelMessage, error)
+	GetParcelsInProgress(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Parcels_GetParcelsInProgressClient, error)
+	SaveParcel(ctx context.Context, in *ParcelMessage, opts ...grpc.CallOption) (*SaveParcelMessage, error)
 }
 
 type parcelsClient struct {
@@ -35,18 +37,82 @@ func NewParcelsClient(cc grpc.ClientConnInterface) ParcelsClient {
 	return &parcelsClient{cc}
 }
 
-func (c *parcelsClient) GetParcels(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ParcelsResponse, error) {
-	out := new(ParcelsResponse)
-	err := c.cc.Invoke(ctx, "/grpc.parcels.Parcels/GetParcels", in, out, opts...)
+func (c *parcelsClient) GetParcels(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Parcels_GetParcelsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Parcels_ServiceDesc.Streams[0], "/grpc.parcels.Parcels/GetParcels", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &parcelsGetParcelsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Parcels_GetParcelsClient interface {
+	Recv() (*ParcelMessage, error)
+	grpc.ClientStream
+}
+
+type parcelsGetParcelsClient struct {
+	grpc.ClientStream
+}
+
+func (x *parcelsGetParcelsClient) Recv() (*ParcelMessage, error) {
+	m := new(ParcelMessage)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *parcelsClient) GetParcelByTrackingCode(ctx context.Context, in *ParcelReq, opts ...grpc.CallOption) (*ParcelMessage, error) {
+	out := new(ParcelMessage)
+	err := c.cc.Invoke(ctx, "/grpc.parcels.Parcels/GetParcelByTrackingCode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *parcelsClient) GetParcelByTrackingCode(ctx context.Context, in *ParcelReq, opts ...grpc.CallOption) (*ParcelsResponse, error) {
-	out := new(ParcelsResponse)
-	err := c.cc.Invoke(ctx, "/grpc.parcels.Parcels/GetParcelByTrackingCode", in, out, opts...)
+func (c *parcelsClient) GetParcelsInProgress(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Parcels_GetParcelsInProgressClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Parcels_ServiceDesc.Streams[1], "/grpc.parcels.Parcels/GetParcelsInProgress", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &parcelsGetParcelsInProgressClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Parcels_GetParcelsInProgressClient interface {
+	Recv() (*ParcelMessage, error)
+	grpc.ClientStream
+}
+
+type parcelsGetParcelsInProgressClient struct {
+	grpc.ClientStream
+}
+
+func (x *parcelsGetParcelsInProgressClient) Recv() (*ParcelMessage, error) {
+	m := new(ParcelMessage)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *parcelsClient) SaveParcel(ctx context.Context, in *ParcelMessage, opts ...grpc.CallOption) (*SaveParcelMessage, error) {
+	out := new(SaveParcelMessage)
+	err := c.cc.Invoke(ctx, "/grpc.parcels.Parcels/SaveParcel", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,8 +123,10 @@ func (c *parcelsClient) GetParcelByTrackingCode(ctx context.Context, in *ParcelR
 // All implementations must embed UnimplementedParcelsServer
 // for forward compatibility
 type ParcelsServer interface {
-	GetParcels(context.Context, *emptypb.Empty) (*ParcelsResponse, error)
-	GetParcelByTrackingCode(context.Context, *ParcelReq) (*ParcelsResponse, error)
+	GetParcels(*emptypb.Empty, Parcels_GetParcelsServer) error
+	GetParcelByTrackingCode(context.Context, *ParcelReq) (*ParcelMessage, error)
+	GetParcelsInProgress(*emptypb.Empty, Parcels_GetParcelsInProgressServer) error
+	SaveParcel(context.Context, *ParcelMessage) (*SaveParcelMessage, error)
 	mustEmbedUnimplementedParcelsServer()
 }
 
@@ -66,11 +134,17 @@ type ParcelsServer interface {
 type UnimplementedParcelsServer struct {
 }
 
-func (UnimplementedParcelsServer) GetParcels(context.Context, *emptypb.Empty) (*ParcelsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetParcels not implemented")
+func (UnimplementedParcelsServer) GetParcels(*emptypb.Empty, Parcels_GetParcelsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetParcels not implemented")
 }
-func (UnimplementedParcelsServer) GetParcelByTrackingCode(context.Context, *ParcelReq) (*ParcelsResponse, error) {
+func (UnimplementedParcelsServer) GetParcelByTrackingCode(context.Context, *ParcelReq) (*ParcelMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetParcelByTrackingCode not implemented")
+}
+func (UnimplementedParcelsServer) GetParcelsInProgress(*emptypb.Empty, Parcels_GetParcelsInProgressServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetParcelsInProgress not implemented")
+}
+func (UnimplementedParcelsServer) SaveParcel(context.Context, *ParcelMessage) (*SaveParcelMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveParcel not implemented")
 }
 func (UnimplementedParcelsServer) mustEmbedUnimplementedParcelsServer() {}
 
@@ -85,22 +159,25 @@ func RegisterParcelsServer(s grpc.ServiceRegistrar, srv ParcelsServer) {
 	s.RegisterService(&Parcels_ServiceDesc, srv)
 }
 
-func _Parcels_GetParcels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
+func _Parcels_GetParcels_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(ParcelsServer).GetParcels(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpc.parcels.Parcels/GetParcels",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ParcelsServer).GetParcels(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(ParcelsServer).GetParcels(m, &parcelsGetParcelsServer{stream})
+}
+
+type Parcels_GetParcelsServer interface {
+	Send(*ParcelMessage) error
+	grpc.ServerStream
+}
+
+type parcelsGetParcelsServer struct {
+	grpc.ServerStream
+}
+
+func (x *parcelsGetParcelsServer) Send(m *ParcelMessage) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _Parcels_GetParcelByTrackingCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -121,6 +198,45 @@ func _Parcels_GetParcelByTrackingCode_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Parcels_GetParcelsInProgress_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ParcelsServer).GetParcelsInProgress(m, &parcelsGetParcelsInProgressServer{stream})
+}
+
+type Parcels_GetParcelsInProgressServer interface {
+	Send(*ParcelMessage) error
+	grpc.ServerStream
+}
+
+type parcelsGetParcelsInProgressServer struct {
+	grpc.ServerStream
+}
+
+func (x *parcelsGetParcelsInProgressServer) Send(m *ParcelMessage) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Parcels_SaveParcel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ParcelMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ParcelsServer).SaveParcel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.parcels.Parcels/SaveParcel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ParcelsServer).SaveParcel(ctx, req.(*ParcelMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Parcels_ServiceDesc is the grpc.ServiceDesc for Parcels service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -129,14 +245,25 @@ var Parcels_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ParcelsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetParcels",
-			Handler:    _Parcels_GetParcels_Handler,
-		},
-		{
 			MethodName: "GetParcelByTrackingCode",
 			Handler:    _Parcels_GetParcelByTrackingCode_Handler,
 		},
+		{
+			MethodName: "SaveParcel",
+			Handler:    _Parcels_SaveParcel_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetParcels",
+			Handler:       _Parcels_GetParcels_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetParcelsInProgress",
+			Handler:       _Parcels_GetParcelsInProgress_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "parcels.proto",
 }

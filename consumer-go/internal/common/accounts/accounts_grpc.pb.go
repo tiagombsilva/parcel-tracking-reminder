@@ -23,8 +23,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccountsClient interface {
-	GetAccounts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AccountResponse, error)
-	GetAccountById(ctx context.Context, in *AccountReq, opts ...grpc.CallOption) (*AccountResponse, error)
+	GetAccounts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Accounts_GetAccountsClient, error)
+	GetAccountByDiscordId(ctx context.Context, in *AccountReq, opts ...grpc.CallOption) (*AccountMessage, error)
+	SaveAccount(ctx context.Context, in *AccountMessage, opts ...grpc.CallOption) (*SaveAccountResponse, error)
+	GetAccountParcels(ctx context.Context, in *AccountReq, opts ...grpc.CallOption) (Accounts_GetAccountParcelsClient, error)
+	SaveParcel(ctx context.Context, in *AccountSaveParcel, opts ...grpc.CallOption) (*SaveAccountResponse, error)
 }
 
 type accountsClient struct {
@@ -35,18 +38,91 @@ func NewAccountsClient(cc grpc.ClientConnInterface) AccountsClient {
 	return &accountsClient{cc}
 }
 
-func (c *accountsClient) GetAccounts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*AccountResponse, error) {
-	out := new(AccountResponse)
-	err := c.cc.Invoke(ctx, "/grpc.accounts.Accounts/GetAccounts", in, out, opts...)
+func (c *accountsClient) GetAccounts(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Accounts_GetAccountsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Accounts_ServiceDesc.Streams[0], "/grpc.accounts.Accounts/GetAccounts", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &accountsGetAccountsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Accounts_GetAccountsClient interface {
+	Recv() (*AccountMessage, error)
+	grpc.ClientStream
+}
+
+type accountsGetAccountsClient struct {
+	grpc.ClientStream
+}
+
+func (x *accountsGetAccountsClient) Recv() (*AccountMessage, error) {
+	m := new(AccountMessage)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *accountsClient) GetAccountByDiscordId(ctx context.Context, in *AccountReq, opts ...grpc.CallOption) (*AccountMessage, error) {
+	out := new(AccountMessage)
+	err := c.cc.Invoke(ctx, "/grpc.accounts.Accounts/GetAccountByDiscordId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *accountsClient) GetAccountById(ctx context.Context, in *AccountReq, opts ...grpc.CallOption) (*AccountResponse, error) {
-	out := new(AccountResponse)
-	err := c.cc.Invoke(ctx, "/grpc.accounts.Accounts/GetAccountById", in, out, opts...)
+func (c *accountsClient) SaveAccount(ctx context.Context, in *AccountMessage, opts ...grpc.CallOption) (*SaveAccountResponse, error) {
+	out := new(SaveAccountResponse)
+	err := c.cc.Invoke(ctx, "/grpc.accounts.Accounts/SaveAccount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *accountsClient) GetAccountParcels(ctx context.Context, in *AccountReq, opts ...grpc.CallOption) (Accounts_GetAccountParcelsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Accounts_ServiceDesc.Streams[1], "/grpc.accounts.Accounts/GetAccountParcels", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &accountsGetAccountParcelsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Accounts_GetAccountParcelsClient interface {
+	Recv() (*AccountParcelMessage, error)
+	grpc.ClientStream
+}
+
+type accountsGetAccountParcelsClient struct {
+	grpc.ClientStream
+}
+
+func (x *accountsGetAccountParcelsClient) Recv() (*AccountParcelMessage, error) {
+	m := new(AccountParcelMessage)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *accountsClient) SaveParcel(ctx context.Context, in *AccountSaveParcel, opts ...grpc.CallOption) (*SaveAccountResponse, error) {
+	out := new(SaveAccountResponse)
+	err := c.cc.Invoke(ctx, "/grpc.accounts.Accounts/SaveParcel", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,8 +133,11 @@ func (c *accountsClient) GetAccountById(ctx context.Context, in *AccountReq, opt
 // All implementations must embed UnimplementedAccountsServer
 // for forward compatibility
 type AccountsServer interface {
-	GetAccounts(context.Context, *emptypb.Empty) (*AccountResponse, error)
-	GetAccountById(context.Context, *AccountReq) (*AccountResponse, error)
+	GetAccounts(*emptypb.Empty, Accounts_GetAccountsServer) error
+	GetAccountByDiscordId(context.Context, *AccountReq) (*AccountMessage, error)
+	SaveAccount(context.Context, *AccountMessage) (*SaveAccountResponse, error)
+	GetAccountParcels(*AccountReq, Accounts_GetAccountParcelsServer) error
+	SaveParcel(context.Context, *AccountSaveParcel) (*SaveAccountResponse, error)
 	mustEmbedUnimplementedAccountsServer()
 }
 
@@ -66,11 +145,20 @@ type AccountsServer interface {
 type UnimplementedAccountsServer struct {
 }
 
-func (UnimplementedAccountsServer) GetAccounts(context.Context, *emptypb.Empty) (*AccountResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccounts not implemented")
+func (UnimplementedAccountsServer) GetAccounts(*emptypb.Empty, Accounts_GetAccountsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAccounts not implemented")
 }
-func (UnimplementedAccountsServer) GetAccountById(context.Context, *AccountReq) (*AccountResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccountById not implemented")
+func (UnimplementedAccountsServer) GetAccountByDiscordId(context.Context, *AccountReq) (*AccountMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccountByDiscordId not implemented")
+}
+func (UnimplementedAccountsServer) SaveAccount(context.Context, *AccountMessage) (*SaveAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveAccount not implemented")
+}
+func (UnimplementedAccountsServer) GetAccountParcels(*AccountReq, Accounts_GetAccountParcelsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAccountParcels not implemented")
+}
+func (UnimplementedAccountsServer) SaveParcel(context.Context, *AccountSaveParcel) (*SaveAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveParcel not implemented")
 }
 func (UnimplementedAccountsServer) mustEmbedUnimplementedAccountsServer() {}
 
@@ -85,38 +173,98 @@ func RegisterAccountsServer(s grpc.ServiceRegistrar, srv AccountsServer) {
 	s.RegisterService(&Accounts_ServiceDesc, srv)
 }
 
-func _Accounts_GetAccounts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
+func _Accounts_GetAccounts_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(AccountsServer).GetAccounts(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpc.accounts.Accounts/GetAccounts",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountsServer).GetAccounts(ctx, req.(*emptypb.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(AccountsServer).GetAccounts(m, &accountsGetAccountsServer{stream})
 }
 
-func _Accounts_GetAccountById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+type Accounts_GetAccountsServer interface {
+	Send(*AccountMessage) error
+	grpc.ServerStream
+}
+
+type accountsGetAccountsServer struct {
+	grpc.ServerStream
+}
+
+func (x *accountsGetAccountsServer) Send(m *AccountMessage) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Accounts_GetAccountByDiscordId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AccountReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccountsServer).GetAccountById(ctx, in)
+		return srv.(AccountsServer).GetAccountByDiscordId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpc.accounts.Accounts/GetAccountById",
+		FullMethod: "/grpc.accounts.Accounts/GetAccountByDiscordId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccountsServer).GetAccountById(ctx, req.(*AccountReq))
+		return srv.(AccountsServer).GetAccountByDiscordId(ctx, req.(*AccountReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Accounts_SaveAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).SaveAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.accounts.Accounts/SaveAccount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).SaveAccount(ctx, req.(*AccountMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Accounts_GetAccountParcels_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(AccountReq)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(AccountsServer).GetAccountParcels(m, &accountsGetAccountParcelsServer{stream})
+}
+
+type Accounts_GetAccountParcelsServer interface {
+	Send(*AccountParcelMessage) error
+	grpc.ServerStream
+}
+
+type accountsGetAccountParcelsServer struct {
+	grpc.ServerStream
+}
+
+func (x *accountsGetAccountParcelsServer) Send(m *AccountParcelMessage) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Accounts_SaveParcel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountSaveParcel)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).SaveParcel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.accounts.Accounts/SaveParcel",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).SaveParcel(ctx, req.(*AccountSaveParcel))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -129,14 +277,29 @@ var Accounts_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AccountsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetAccounts",
-			Handler:    _Accounts_GetAccounts_Handler,
+			MethodName: "GetAccountByDiscordId",
+			Handler:    _Accounts_GetAccountByDiscordId_Handler,
 		},
 		{
-			MethodName: "GetAccountById",
-			Handler:    _Accounts_GetAccountById_Handler,
+			MethodName: "SaveAccount",
+			Handler:    _Accounts_SaveAccount_Handler,
+		},
+		{
+			MethodName: "SaveParcel",
+			Handler:    _Accounts_SaveParcel_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetAccounts",
+			Handler:       _Accounts_GetAccounts_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetAccountParcels",
+			Handler:       _Accounts_GetAccountParcels_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "accounts.proto",
 }

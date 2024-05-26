@@ -10,10 +10,10 @@ option java_outer_classname = "AccountsProto";
 option go_package = "common/accounts";
 
 service Accounts {
-  rpc GetAccounts(google.protobuf.Empty) returns (AccountMessage){}
+  rpc GetAccounts(google.protobuf.Empty) returns (stream AccountMessage){}
   rpc GetAccountByDiscordId(AccountReq) returns (AccountMessage){}
   rpc SaveAccount(AccountMessage) returns (SaveAccountResponse) {}
-  rpc GetAccountParcels(AccountReq) returns (AccountParcelMessage){}
+  rpc GetAccountParcels(AccountReq) returns (stream AccountParcelMessage){}
   rpc SaveParcel(AccountSaveParcel) returns (SaveAccountResponse) {}
 }
 
