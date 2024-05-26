@@ -2,6 +2,7 @@ package external
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 )
 
@@ -29,27 +30,50 @@ type Tracking struct {
 	Done      bool        `json:"done"`
 }
 
+type ResponseError struct {
+	Error string `json:"error"`
+}
+
 func NewParcelService(handler Handler) *ParcelService {
 	return &ParcelService{handler}
 }
 
-func (ps *ParcelService) GetParcel(parcelReq *Request) *Tracking {
+func (ps *ParcelService) GetParcel(parcelReq *Request) (*Tracking, error) {
 	log.Printf("Fetching parcel from external parcelsapp")
 	jsonRes, err := ps.handler.PostParcel(parcelReq)
 	if err != nil {
-		log.Panic("failed to fetch Parcel")
-		return nil
+		return nil, err
 	}
-	return getParcelFromJson(jsonRes)
+	jsonUnmarshal, err := getParcelFromJson(jsonRes)
+	if err != nil {
+		return nil, err
+	}
+	return jsonUnmarshal, nil
 }
 
-func (ps *ParcelService) GetLatestParcelState(parcelReq *Request) *State {
-	response := ps.GetParcel(parcelReq)
-	return &response.Shipments[len(response.Shipments)-1].LastState
+func (ps *ParcelService) GetLatestParcelState(parcelReq *Request) (*State, error) {
+	response, err := ps.GetParcel(parcelReq)
+	if err != nil {
+		return nil, err
+	}
+	return &response.Shipments[len(response.Shipments)-1].LastState, nil
 }
 
-func getParcelFromJson(response []byte) *Tracking {
+func getError(response []byte) error {
+	var responseError ResponseError
+	json.Unmarshal(response, &responseError)
+	if responseError.Error != "" {
+		return errors.New("Error found in API: " + responseError.Error)
+	}
+	return nil
+}
+
+func getParcelFromJson(response []byte) (*Tracking, error) {
+	err := getError(response)
+	if err != nil {
+		return nil, err
+	}
 	var parcelJsons Tracking
 	json.Unmarshal(response, &parcelJsons)
-	return &parcelJsons
+	return &parcelJsons, nil
 }

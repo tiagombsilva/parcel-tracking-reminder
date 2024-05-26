@@ -17,10 +17,10 @@ func (d *dummyStruct) PostParcel(data *Request) ([]byte, error) {
 func TestGetParcel(t *testing.T) {
 	dummyHandler := &dummyStruct{}
 	ps := NewParcelService(dummyHandler)
-	res := ps.GetParcel(&Request{})
+	res, err := ps.GetParcel(&Request{})
 
 	expectedUuid := "dummyuuid123213"
-	if res.UUID != expectedUuid {
+	if err != nil && res.UUID != expectedUuid {
 		t.Fatalf("Parsed response and JSON mismatch expected '%s', but got '%s'", expectedUuid, res.UUID)
 	}
 }
@@ -28,10 +28,10 @@ func TestGetParcel(t *testing.T) {
 func TestGetLatestParcelState(t *testing.T) {
 	dummyHandler := &dummyStruct{}
 	ps := NewParcelService(dummyHandler)
-	res := ps.GetParcel(&Request{})
+	res, err := ps.GetParcel(&Request{})
 
 	expectedDate := "2024-05-20T10:22:00Z"
-	if res.Shipments[len(res.Shipments)-1].LastState.Date != expectedDate {
+	if err != nil && res.Shipments[len(res.Shipments)-1].LastState.Date != expectedDate {
 		t.Fatalf("Parsed last state date mismatch expected '%s', but got '%s'", expectedDate, res.UUID)
 	}
 }

@@ -1,5 +1,5 @@
-#run-orders:
-#	@go run services/orders/*.go
+run-cron:
+	@go run main.go
 gen:
 	@protoc \
 		--proto_path=../backend-api/src/main/proto "parcels.proto"\

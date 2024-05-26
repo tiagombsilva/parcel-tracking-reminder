@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 	"parcelsApi/external"
 	"parcelsApi/internal"
 	"parcelsApi/internal/common/parcels"
@@ -20,18 +21,21 @@ var (
 
 func main() {
 	SetupFlags()
-	parcelHandler := external.NewParcelHandler(nil, apiUrl)
-	parcelService := external.NewParcelService(parcelHandler)
+	parcelService := GetParcelService()
 	grpcService := GetGrpcConnection(serverAddr)
 	job := internal.NewJobImpl(parcelService, grpcService)
 
 	parcelReq := &external.Request{
 		TrackingId:  "LV997747362CN",
 		DestCountry: "Portugal",
-		//Zipcode:     "9760-180",
+		Zipcode:     "9760-180",
 	}
-	latestState := parcelService.GetLatestParcelState(parcelReq)
-	log.Printf("package: %s", latestState)
+	latestState, err := parcelService.GetLatestParcelState(parcelReq)
+	if err != nil {
+		log.Print(err.Error())
+	} else {
+		log.Printf("package: %s", latestState)
+	}
 
 	cron := cron.New()
 	cron.AddJob(*cronSchedule, job)
@@ -41,6 +45,11 @@ func main() {
 	// until an interrupt signal is received
 	interrupt := make(chan struct{})
 	<-interrupt
+}
+
+func GetParcelService() *external.ParcelService {
+	handler := external.NewParcelHandler(http.DefaultClient, apiUrl)
+	return external.NewParcelService(handler)
 }
 
 func GetGrpcConnection(serverAddr *string) internal.ParcelGrpcService {
