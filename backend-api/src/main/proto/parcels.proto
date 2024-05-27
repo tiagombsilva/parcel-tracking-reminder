@@ -28,7 +28,8 @@ message ParcelMessage {
   optional string destination = 5;
   optional string lastUpdate = 6;
   optional string status = 7;
-  optional bool isDone = 8;
+  optional string zipCode = 8;
+  optional bool isDone = 9;
 }
 
 message SaveParcelMessage {

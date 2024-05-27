@@ -31,6 +31,12 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
+    @GetMapping("{discordId}")
+    public ResponseEntity<Account> getAccountById(@PathVariable("discordId") String discordId) {
+        return accountService.getAccountById(discordId).map(ResponseEntity::ok)
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
     @GetMapping("{discordId}/parcels")
     public ResponseEntity<Collection<Parcel>> getAccountParcels(@PathVariable("discordId") String discordId) {
         return ResponseEntity.ok(accountService.getAccountParcels(discordId));

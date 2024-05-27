@@ -38,6 +38,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
                     .setOrigin(parcel.getOrigin())
                     .setTrackingCode(parcel.getTrackingCode())
                     .setStatus(parcel.getStatus())
+                    .setZipCode(parcel.getZipCode())
                     .setIsDone(parcel.isDone())
                     .build();
             responseObserver.onNext(response);
@@ -62,6 +63,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
                     .setOrigin(parcel.getOrigin())
                     .setTrackingCode(parcel.getTrackingCode())
                     .setStatus(parcel.getStatus())
+                    .setZipCode(parcel.getZipCode())
                     .setIsDone(parcel.isDone())
                     .build();
             responseObserver.onNext(response);
@@ -83,6 +85,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
                     .setOrigin(parcel.getOrigin())
                     .setTrackingCode(parcel.getTrackingCode())
                     .setStatus(parcel.getStatus())
+                    .setZipCode(parcel.getZipCode())
                     .setIsDone(parcel.isDone())
                     .build();
             responseObserver.onNext(response);
@@ -105,6 +108,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
         parcel.setLastUpdate(Timestamp.from(Instant.now()));
         parcel.setTrackingCode(request.getTrackingCode());
         parcel.setLastUpdate(Timestamp.valueOf(request.getLastUpdate()));
+        parcel.setZipCode(request.getZipCode());
         parcel.setDone(request.getIsDone());
         var savedParcel = parcelService.saveOrUpdateParcel(parcel);
         var spm = SaveParcelMessage.newBuilder().setIsSaved(savedParcel.isPresent()).build();

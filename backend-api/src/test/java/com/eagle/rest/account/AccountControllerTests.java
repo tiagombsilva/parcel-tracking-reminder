@@ -41,10 +41,10 @@ public class AccountControllerTests {
     }
 
     @Test
-    public void getParcelById() throws Exception {
+    public void getAcountById() throws Exception {
         final var account = getDummyAccount("discordId");
-        given(service.getAccount("discordId")).willReturn(Optional.of(account));
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/account/{id}", 1L))
+        given(service.getAccountById("discordId")).willReturn(Optional.of(account));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/account/{id}", "discordId"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("%s".formatted(getJson(account))));
     }
@@ -65,7 +65,7 @@ public class AccountControllerTests {
     public void deleteAccount() throws Exception {
         final var account = getDummyAccount("discordId");
         given(service.deleteAccount("discordId")).willReturn(Optional.of(account));
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/account/{id}", 1L))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/account/{id}", "discordId"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("%s".formatted(getJson(account))));
     }

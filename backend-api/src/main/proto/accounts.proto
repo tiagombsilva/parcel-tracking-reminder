@@ -38,7 +38,8 @@ message AccountParcelMessage {
   string destination = 5;
   string lastUpdate = 6;
   string status = 7;
-  bool isDone = 8;
+  string zipCode = 8;
+  bool isDone = 9;
 }
 
 message AccountSaveParcel {
@@ -50,5 +51,6 @@ message AccountSaveParcel {
   optional string destination = 6;
   optional string lastUpdate = 7;
   optional string status = 8;
-  optional bool isDone = 9;
+  optional string zipCode = 9;
+  optional bool isDone = 10;
 }

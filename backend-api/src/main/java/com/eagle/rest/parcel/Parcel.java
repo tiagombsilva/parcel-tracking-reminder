@@ -39,6 +39,7 @@ public class Parcel {
     private Timestamp lastUpdate;
     private String status;
     private boolean done;
+    private String zipCode;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discord_id", referencedColumnName = "discord_id")
     @JsonIgnore
