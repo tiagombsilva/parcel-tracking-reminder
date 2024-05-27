@@ -9,8 +9,8 @@
 
 ## Tech
 
-- [Spring-Boot] - Backend REST API (Browser/Discord Bot)
-- [Spring-Boot] - Backend gRPC API (Between Consumer Go and SpringBoot)
+- [Spring-Boot] - Backend REST API (Browser)
+- [Spring-Boot] - Backend gRPC API (Between Consumer Go and SpringBoot and Discord API)
 - [Go] - Consumer of Parcels API
 - [Rust] - Discord Bot
 - [Go] - Consuming Parcels API
