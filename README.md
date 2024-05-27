@@ -13,7 +13,6 @@
 - [Spring-Boot] - Backend gRPC API (Between Consumer Go and SpringBoot and Discord API)
 - [Go] - Consumer of Parcels API
 - [Rust] - Discord Bot
-- [Go] - Consuming Parcels API
 - [Postgres] - Database
 
 ## Installation
