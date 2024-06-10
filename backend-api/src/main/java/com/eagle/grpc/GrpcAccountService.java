@@ -106,9 +106,9 @@ public class GrpcAccountService extends AccountsGrpc.AccountsImplBase {
         parcel.setStatus(request.getStatus());
         parcel.setZipCode(request.getZipCode());
         parcel.setDone(request.getIsDone());
-        final var account = accountService.saveOrUpdateParcel(request.getDiscordId(), parcel);
+        final var parcelSaved = accountService.saveOrUpdateParcel(request.getDiscordId(), parcel);
         responseObserver.onNext(SaveAccountResponse.newBuilder()
-                .setIsSaved(account.isPresent())
+                .setIsSaved(parcelSaved != null)
                 .build());
         responseObserver.onCompleted();
     }

@@ -1,5 +1,7 @@
 package com.eagle.rest.parcel;
 
+import com.eagle.rest.exception.ResourceHasBondsException;
+import com.eagle.rest.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,18 +26,26 @@ public class ParcelService {
         return repository.getInProgressParcels();
     }
 
-    public Optional<Parcel> getParcel(final Long uuid) {
+    public Optional<Parcel> getParcel(final String uuid) {
         return repository.findById(uuid);
     }
 
-    public Optional<Parcel> saveOrUpdateParcel(final Parcel parcel) {
-        return Optional.of(repository.save(parcel));
+    public Parcel saveOrUpdateParcel(final Parcel parcel) {
+        var savedParcel = repository.findById(parcel.getUuid());
+        if (savedParcel.isPresent() && parcel.getAccount() == null) {
+            parcel.setAccount(savedParcel.get().getAccount());
+        }
+        return repository.save(parcel);
     }
 
-    public Optional<Parcel> deleteParcel(final Long parcelId) {
-        final Optional<Parcel> parcelOptional = repository.findById(parcelId);
-        parcelOptional.ifPresent(p -> repository.deleteById(parcelId));
-        return parcelOptional;
+    public void deleteParcel(final String parcelId) throws ResourceHasBondsException {
+        final Parcel parcel = repository.findById(parcelId).orElseThrow(
+                () -> new ResourceNotFoundException("Parcel not found"));
+        try {
+            repository.deleteById(parcelId);
+        } catch (Exception e) {
+            throw new ResourceHasBondsException("Parcel not found");
+        }
     }
 
     public Optional<Parcel> getParcelByTrackingCode(final String trackingCode) {

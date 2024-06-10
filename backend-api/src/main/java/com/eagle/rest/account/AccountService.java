@@ -1,5 +1,6 @@
 package com.eagle.rest.account;
 
+import com.eagle.rest.exception.ResourceNotFoundException;
 import com.eagle.rest.parcel.Parcel;
 import com.eagle.rest.parcel.ParcelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,15 +52,14 @@ public class AccountService {
         return List.of();
     }
 
-    public Optional<Parcel> saveOrUpdateParcel(final String discordId, final Parcel parcel) {
-        final Optional<Account> optionalAccount = getAccountById(discordId);
+    public Parcel saveOrUpdateParcel(final String discordId, final Parcel parcel) throws
+            ResourceNotFoundException {
+        final Account account = getAccountById(discordId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        parcel.setAccount(account);
         parcelService.saveOrUpdateParcel(parcel);
-        if (optionalAccount.isPresent()) {
-            var acc = optionalAccount.get();
-            acc.getParcels().add(parcel);
-            saveOrUpdateAccount(acc);
-            return Optional.of(parcel);
-        }
-        return Optional.empty();
+        account.getParcels().add(parcel);
+        repository.save(account);
+        return parcel;
     }
 }

@@ -111,7 +111,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
         parcel.setZipCode(request.getZipCode());
         parcel.setDone(request.getIsDone());
         var savedParcel = parcelService.saveOrUpdateParcel(parcel);
-        var spm = SaveParcelMessage.newBuilder().setIsSaved(savedParcel.isPresent()).build();
+        var spm = SaveParcelMessage.newBuilder().setIsSaved(savedParcel != null).build();
         responseObserver.onNext(spm);
         responseObserver.onCompleted();
     }

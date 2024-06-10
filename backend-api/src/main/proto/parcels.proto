@@ -21,7 +21,7 @@ message ParcelReq {
 }
 
 message ParcelMessage {
-  int64 uuid = 1;
+  string uuid = 1;
   optional string trackingCode = 2;
   optional string name = 3;
   optional string origin = 4;

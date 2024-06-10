@@ -1,5 +1,6 @@
 package com.eagle.rest.parcel;
 
+import com.eagle.rest.exception.ResourceHasBondsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/${api.version}/parcel")
@@ -36,21 +36,20 @@ public class ParcelController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Parcel> getParcelById(@PathVariable("id") Long parcelId) {
-        return service.getParcel(parcelId).map(ResponseEntity::ok)
+    public ResponseEntity<Parcel> getParcelById(@PathVariable("id") String parcelUuid) {
+        return service.getParcel(parcelUuid).map(ResponseEntity::ok)
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping()
-    public ResponseEntity<Parcel> saveOrUpdate(@RequestBody Parcel parcel) {
-        final Optional<Parcel> savedParcel = service.saveOrUpdateParcel(parcel);
-        return savedParcel.map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+    public Parcel saveOrUpdate(@RequestBody Parcel parcel) {
+        return service.saveOrUpdateParcel(parcel);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Parcel> deleteParcel(@PathVariable("id") Long parcelId) {
-        return service.deleteParcel(parcelId).map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Void> deleteParcel(@PathVariable("id") String parcelUuid) throws
+            ResourceHasBondsException {
+        service.deleteParcel(parcelUuid);
+        return ResponseEntity.noContent().build();
     }
 }
