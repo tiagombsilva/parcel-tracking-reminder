@@ -16,7 +16,9 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+
+import static com.eagle.utils.Helper.getOrDefault;
 
 @GrpcService
 public class GrpcAccountService extends AccountsGrpc.AccountsImplBase {
@@ -78,13 +80,13 @@ public class GrpcAccountService extends AccountsGrpc.AccountsImplBase {
             for (var parcel : account.get().getParcels()) {
                 responseObserver.onNext(AccountParcelMessage.newBuilder()
                         .setUuid(parcel.getUuid())
-                        .setName(parcel.getName())
-                        .setDestination(parcel.getDestination())
-                        .setLastUpdate(parcel.getLastUpdate().toString())
-                        .setOrigin(parcel.getOrigin())
+                        .setName(getOrDefault(parcel.getName()))
+                        .setDestination(getOrDefault(parcel.getDestination()))
+                        .setLastUpdate(getOrDefault(parcel.getLastUpdate()))
+                        .setOrigin(getOrDefault(parcel.getOrigin()))
                         .setTrackingCode(parcel.getTrackingCode())
-                        .setStatus(parcel.getStatus())
-                        .setZipCode(parcel.getZipCode())
+                        .setStatus(getOrDefault(parcel.getStatus()))
+                        .setZipCode(getOrDefault(parcel.getZipCode()))
                         .setIsDone(parcel.isDone())
                         .build());
             }
@@ -101,7 +103,7 @@ public class GrpcAccountService extends AccountsGrpc.AccountsImplBase {
         parcel.setName(request.getName());
         parcel.setOrigin(request.getOrigin());
         parcel.setDestination(request.getDestination());
-        parcel.setLastUpdate(Timestamp.valueOf(request.getLastUpdate()));
+        parcel.setLastUpdate(ZonedDateTime.parse(request.getLastUpdate()));
         parcel.setTrackingCode(request.getTrackingCode());
         parcel.setStatus(request.getStatus());
         parcel.setZipCode(request.getZipCode());

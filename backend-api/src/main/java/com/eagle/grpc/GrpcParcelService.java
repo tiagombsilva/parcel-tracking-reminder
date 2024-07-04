@@ -13,8 +13,9 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.ZonedDateTime;
+
+import static com.eagle.utils.Helper.getOrDefault;
 
 @GrpcService
 public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
@@ -26,21 +27,25 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
         this.parcelService = parcelService;
     }
 
+    static ParcelMessage getParcelMessage(final Parcel parcel) {
+        return ParcelMessage.newBuilder()
+                .setUuid(parcel.getUuid())
+                .setName(parcel.getName())
+                .setDestination(getOrDefault(parcel.getDestination()))
+                .setLastUpdate(getOrDefault(parcel.getLastUpdate()))
+                .setOrigin(getOrDefault(parcel.getOrigin()))
+                .setTrackingCode(parcel.getTrackingCode())
+                .setStatus(getOrDefault(parcel.getStatus()))
+                .setZipCode(getOrDefault(parcel.getZipCode()))
+                .setIsDone(parcel.isDone())
+                .build();
+    }
+
     @Override
     public void getParcels(Empty request, StreamObserver<ParcelMessage> responseObserver) {
         var parcels = parcelService.getAllParcels();
         for (var parcel : parcels) {
-            ParcelMessage response = ParcelMessage.newBuilder()
-                    .setUuid(parcel.getUuid())
-                    .setName(parcel.getName())
-                    .setDestination(parcel.getDestination())
-                    .setLastUpdate(parcel.getLastUpdate().toString())
-                    .setOrigin(parcel.getOrigin())
-                    .setTrackingCode(parcel.getTrackingCode())
-                    .setStatus(parcel.getStatus())
-                    .setZipCode(parcel.getZipCode())
-                    .setIsDone(parcel.isDone())
-                    .build();
+            ParcelMessage response = getParcelMessage(parcel);
             responseObserver.onNext(response);
         }
         if (parcels.isEmpty()) {
@@ -55,45 +60,11 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
         var parcelOptional = parcelService.getParcelByTrackingCode(request.getTrackingCode());
         if (parcelOptional.isPresent()) {
             var parcel = parcelOptional.get();
-            ParcelMessage response = ParcelMessage.newBuilder()
-                    .setUuid(parcel.getUuid())
-                    .setName(parcel.getName())
-                    .setDestination(parcel.getDestination())
-                    .setLastUpdate(parcel.getLastUpdate().toString())
-                    .setOrigin(parcel.getOrigin())
-                    .setTrackingCode(parcel.getTrackingCode())
-                    .setStatus(parcel.getStatus())
-                    .setZipCode(parcel.getZipCode())
-                    .setIsDone(parcel.isDone())
-                    .build();
+            ParcelMessage response = getParcelMessage(parcel);
             responseObserver.onNext(response);
             responseObserver.onCompleted();
         } else {
             responseObserver.onError(new StatusRuntimeException(Status.NOT_FOUND));
-        }
-    }
-
-    @Override
-    public void getParcelsInProgress(Empty request, StreamObserver<ParcelMessage> responseObserver) {
-        var parcels = parcelService.getAllParcelsInProgress();
-        for (var parcel : parcels) {
-            ParcelMessage response = ParcelMessage.newBuilder()
-                    .setUuid(parcel.getUuid())
-                    .setName(parcel.getName())
-                    .setDestination(parcel.getDestination())
-                    .setLastUpdate(parcel.getLastUpdate().toString())
-                    .setOrigin(parcel.getOrigin())
-                    .setTrackingCode(parcel.getTrackingCode())
-                    .setStatus(parcel.getStatus())
-                    .setZipCode(parcel.getZipCode())
-                    .setIsDone(parcel.isDone())
-                    .build();
-            responseObserver.onNext(response);
-        }
-        if (parcels.isEmpty()) {
-            responseObserver.onError(new StatusRuntimeException(Status.NOT_FOUND));
-        } else {
-            responseObserver.onCompleted();
         }
     }
 
@@ -105,9 +76,8 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
         parcel.setOrigin(request.getOrigin());
         parcel.setDestination(request.getDestination());
         parcel.setStatus(request.getStatus());
-        parcel.setLastUpdate(Timestamp.from(Instant.now()));
         parcel.setTrackingCode(request.getTrackingCode());
-        parcel.setLastUpdate(Timestamp.valueOf(request.getLastUpdate()));
+        parcel.setLastUpdate(ZonedDateTime.parse(request.getLastUpdate()));
         parcel.setZipCode(request.getZipCode());
         parcel.setDone(request.getIsDone());
         var savedParcel = parcelService.saveOrUpdateParcel(parcel);

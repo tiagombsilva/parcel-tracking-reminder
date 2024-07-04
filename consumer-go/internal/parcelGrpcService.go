@@ -9,6 +9,7 @@ import (
 
 type ParcelGrpcService interface {
 	GetAllParcels() (parcels.Parcels_GetParcelsClient, error)
+	saveParcel(parcelMessage *parcels.ParcelMessage) (*parcels.SaveParcelMessage, error)
 }
 
 type ParcelGrpcServiceImpl struct {
@@ -23,4 +24,8 @@ func NewParcelGrpcServiceImpl(parcelClient parcels.ParcelsClient) *ParcelGrpcSer
 
 func (service *ParcelGrpcServiceImpl) GetAllParcels() (parcels.Parcels_GetParcelsClient, error) {
 	return service.parcelClient.GetParcels(context.Background(), &emptypb.Empty{})
+}
+
+func (service *ParcelGrpcServiceImpl) saveParcel(parcelMessage *parcels.ParcelMessage) (*parcels.SaveParcelMessage, error) {
+	return service.parcelClient.SaveParcel(context.Background(), parcelMessage)
 }

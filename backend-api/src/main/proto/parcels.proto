@@ -12,7 +12,6 @@ option go_package = "common/parcels";
 service Parcels {
   rpc GetParcels(google.protobuf.Empty) returns (stream ParcelMessage){}
   rpc GetParcelByTrackingCode(ParcelReq) returns (ParcelMessage){}
-  rpc GetParcelsInProgress(google.protobuf.Empty) returns (stream ParcelMessage){}
   rpc SaveParcel(ParcelMessage) returns (SaveParcelMessage){}
 }
 

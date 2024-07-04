@@ -25,7 +25,6 @@ const _ = grpc.SupportPackageIsVersion7
 type ParcelsClient interface {
 	GetParcels(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Parcels_GetParcelsClient, error)
 	GetParcelByTrackingCode(ctx context.Context, in *ParcelReq, opts ...grpc.CallOption) (*ParcelMessage, error)
-	GetParcelsInProgress(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Parcels_GetParcelsInProgressClient, error)
 	SaveParcel(ctx context.Context, in *ParcelMessage, opts ...grpc.CallOption) (*SaveParcelMessage, error)
 }
 
@@ -78,38 +77,6 @@ func (c *parcelsClient) GetParcelByTrackingCode(ctx context.Context, in *ParcelR
 	return out, nil
 }
 
-func (c *parcelsClient) GetParcelsInProgress(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Parcels_GetParcelsInProgressClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Parcels_ServiceDesc.Streams[1], "/grpc.parcels.Parcels/GetParcelsInProgress", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &parcelsGetParcelsInProgressClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type Parcels_GetParcelsInProgressClient interface {
-	Recv() (*ParcelMessage, error)
-	grpc.ClientStream
-}
-
-type parcelsGetParcelsInProgressClient struct {
-	grpc.ClientStream
-}
-
-func (x *parcelsGetParcelsInProgressClient) Recv() (*ParcelMessage, error) {
-	m := new(ParcelMessage)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 func (c *parcelsClient) SaveParcel(ctx context.Context, in *ParcelMessage, opts ...grpc.CallOption) (*SaveParcelMessage, error) {
 	out := new(SaveParcelMessage)
 	err := c.cc.Invoke(ctx, "/grpc.parcels.Parcels/SaveParcel", in, out, opts...)
@@ -125,7 +92,6 @@ func (c *parcelsClient) SaveParcel(ctx context.Context, in *ParcelMessage, opts 
 type ParcelsServer interface {
 	GetParcels(*emptypb.Empty, Parcels_GetParcelsServer) error
 	GetParcelByTrackingCode(context.Context, *ParcelReq) (*ParcelMessage, error)
-	GetParcelsInProgress(*emptypb.Empty, Parcels_GetParcelsInProgressServer) error
 	SaveParcel(context.Context, *ParcelMessage) (*SaveParcelMessage, error)
 	mustEmbedUnimplementedParcelsServer()
 }
@@ -139,9 +105,6 @@ func (UnimplementedParcelsServer) GetParcels(*emptypb.Empty, Parcels_GetParcelsS
 }
 func (UnimplementedParcelsServer) GetParcelByTrackingCode(context.Context, *ParcelReq) (*ParcelMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetParcelByTrackingCode not implemented")
-}
-func (UnimplementedParcelsServer) GetParcelsInProgress(*emptypb.Empty, Parcels_GetParcelsInProgressServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetParcelsInProgress not implemented")
 }
 func (UnimplementedParcelsServer) SaveParcel(context.Context, *ParcelMessage) (*SaveParcelMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveParcel not implemented")
@@ -198,27 +161,6 @@ func _Parcels_GetParcelByTrackingCode_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Parcels_GetParcelsInProgress_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(emptypb.Empty)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(ParcelsServer).GetParcelsInProgress(m, &parcelsGetParcelsInProgressServer{stream})
-}
-
-type Parcels_GetParcelsInProgressServer interface {
-	Send(*ParcelMessage) error
-	grpc.ServerStream
-}
-
-type parcelsGetParcelsInProgressServer struct {
-	grpc.ServerStream
-}
-
-func (x *parcelsGetParcelsInProgressServer) Send(m *ParcelMessage) error {
-	return x.ServerStream.SendMsg(m)
-}
-
 func _Parcels_SaveParcel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ParcelMessage)
 	if err := dec(in); err != nil {
@@ -257,11 +199,6 @@ var Parcels_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetParcels",
 			Handler:       _Parcels_GetParcels_Handler,
-			ServerStreams: true,
-		},
-		{
-			StreamName:    "GetParcelsInProgress",
-			Handler:       _Parcels_GetParcelsInProgress_Handler,
 			ServerStreams: true,
 		},
 	},

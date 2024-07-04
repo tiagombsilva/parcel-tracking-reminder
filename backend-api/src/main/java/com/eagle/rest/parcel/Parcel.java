@@ -18,7 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.lang.Nullable;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
@@ -38,7 +38,7 @@ public class Parcel {
     private String origin;
     private String destination;
     @Column(name = "last_update")
-    private Timestamp lastUpdate;
+    private ZonedDateTime lastUpdate;
     private String status;
     private boolean done;
     private String zipCode;
