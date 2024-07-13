@@ -8,12 +8,12 @@ import (
 )
 
 type JobImpl struct {
-	parcelService *external.ParcelService
+	parcelService external.ParcelService
 	grpcService   ParcelGrpcService
 	wg            sync.WaitGroup
 }
 
-func NewJobImpl(parcelService *external.ParcelService, grpcService ParcelGrpcService) *JobImpl {
+func NewJobImpl(parcelService external.ParcelService, grpcService ParcelGrpcService) *JobImpl {
 	return &JobImpl{
 		parcelService: parcelService,
 		grpcService:   grpcService,
@@ -78,5 +78,5 @@ func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState 
 		IsDone:       res.IsDone,
 	}
 	log.Printf("Saving new status")
-	job.grpcService.saveParcel(parcelMessage)
+	job.grpcService.SaveParcel(parcelMessage)
 }

@@ -33,7 +33,7 @@ func main() {
 	//<-interrupt
 }
 
-func GetParcelService() *external.ParcelService {
+func GetParcelService() external.ParcelService {
 	handler := external.NewParcelHandler(http.DefaultClient, apiUrl)
 	return external.NewParcelService(handler)
 }
