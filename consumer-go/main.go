@@ -8,7 +8,6 @@ import (
 	"parcelsApi/internal"
 	"parcelsApi/internal/common/parcels"
 
-	"github.com/robfig/cron/v3"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -25,17 +24,16 @@ func main() {
 	grpcService := GetGrpcConnection(serverAddr)
 	job := internal.NewJobImpl(parcelService, grpcService)
 
-	cron := cron.New()
-	cron.AddJob(*cronSchedule, job)
-	cron.Start()
+	job.Run()
+	//cron := cron.New()
+	//cron.AddJob(*cronSchedule, job)
+	//cron.Start()
 
-	// Use a channel to keep the main goroutine alive
-	// until an interrupt signal is received
-	interrupt := make(chan struct{})
-	<-interrupt
+	//interrupt := make(chan struct{})
+	//<-interrupt
 }
 
-func GetParcelService() *external.ParcelService {
+func GetParcelService() external.ParcelService {
 	handler := external.NewParcelHandler(http.DefaultClient, apiUrl)
 	return external.NewParcelService(handler)
 }

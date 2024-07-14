@@ -31,7 +31,7 @@ message SaveAccountResponse {
 }
 
 message AccountParcelMessage {
-  int64 uuid = 1;
+  string uuid = 1;
   string trackingCode = 2;
   string name = 3;
   string origin = 4;
@@ -44,7 +44,7 @@ message AccountParcelMessage {
 
 message AccountSaveParcel {
   string discordId = 1;
-  int64 uuid = 2;
+  string uuid = 2;
   optional string trackingCode = 3;
   optional string name = 4;
   optional string origin = 5;

@@ -1,13 +1,16 @@
 package com.eagle.rest.account;
 
+import com.eagle.rest.exception.ResourceNotFoundException;
 import com.eagle.rest.parcel.Parcel;
 import com.eagle.rest.parcel.ParcelService;
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AccountService {
@@ -51,15 +54,17 @@ public class AccountService {
         return List.of();
     }
 
-    public Optional<Parcel> saveOrUpdateParcel(final String discordId, final Parcel parcel) {
-        final Optional<Account> optionalAccount = getAccountById(discordId);
-        parcelService.saveOrUpdateParcel(parcel);
-        if (optionalAccount.isPresent()) {
-            var acc = optionalAccount.get();
-            acc.getParcels().add(parcel);
-            saveOrUpdateAccount(acc);
-            return Optional.of(parcel);
+    public Parcel saveOrUpdateParcel(final String discordId, final Parcel parcel) throws
+            ResourceNotFoundException {
+        final Account account = getAccountById(discordId)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
+        parcel.setAccount(account);
+        if (StringUtils.isEmpty(parcel.getUuid())) {
+            parcel.setUuid(UUID.randomUUID().toString());
         }
-        return Optional.empty();
+        parcelService.saveOrUpdateParcel(parcel);
+        account.getParcels().add(parcel);
+        repository.save(account);
+        return parcel;
     }
 }

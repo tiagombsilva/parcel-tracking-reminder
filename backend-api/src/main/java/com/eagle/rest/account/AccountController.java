@@ -43,10 +43,9 @@ public class AccountController {
     }
 
     @PostMapping("{discordId}/parcel")
-    public ResponseEntity<Parcel> saveOrUpdateParcel(@PathVariable("discordId") String discordId,
-                                                     @RequestBody Parcel parcel) {
-        return accountService.saveOrUpdateParcel(discordId, parcel).map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public Parcel saveOrUpdateParcel(@PathVariable("discordId") String discordId,
+                                     @RequestBody Parcel parcel) {
+        return accountService.saveOrUpdateParcel(discordId, parcel);
     }
 
     @PostMapping()
@@ -57,8 +56,8 @@ public class AccountController {
     }
 
     @DeleteMapping("{discordId}")
-    public ResponseEntity<Account> deleteAccount(@PathVariable("discordId") String discordId) {
-        return accountService.deleteAccount(discordId).map(ResponseEntity::ok)
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Void> deleteAccount(@PathVariable("discordId") String discordId) {
+        accountService.deleteAccount(discordId);
+        return ResponseEntity.noContent().build();
     }
 }

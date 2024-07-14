@@ -8,12 +8,12 @@ import (
 )
 
 type JobImpl struct {
-	parcelService *external.ParcelService
+	parcelService external.ParcelService
 	grpcService   ParcelGrpcService
 	wg            sync.WaitGroup
 }
 
-func NewJobImpl(parcelService *external.ParcelService, grpcService ParcelGrpcService) *JobImpl {
+func NewJobImpl(parcelService external.ParcelService, grpcService ParcelGrpcService) *JobImpl {
 	return &JobImpl{
 		parcelService: parcelService,
 		grpcService:   grpcService,
@@ -32,6 +32,9 @@ func (job *JobImpl) Run() {
 		if err != nil {
 			break
 		}
+		if resp.GetIsDone() {
+			continue
+		}
 		job.wg.Add(1)
 		go job.updatePackageToLatestState(resp)
 	}
@@ -40,18 +43,40 @@ func (job *JobImpl) Run() {
 }
 
 func (job *JobImpl) updatePackageToLatestState(res *parcels.ParcelMessage) {
-	defer job.wg.Done()
 	log.Printf("Updating Parcel '%s'", res)
+	latestState := job.getLatestState(res)
+	job.updateToLatestState(res, latestState)
+	defer job.wg.Done()
+}
 
-	// parcelReq := &external.Request{
-	// 	TrackingId:  "LV997747362CN",
-	// 	DestCountry: "Portugal",
-	// 	Zipcode:     "9760-180",
-	// }
-	// latestState, err := parcelService.GetLatestParcelState(parcelReq)
-	// if err != nil {
-	// 	log.Print(err.Error())
-	// } else {
-	// 	log.Printf("package: %s", latestState)
-	// }
+func (job *JobImpl) getLatestState(res *parcels.ParcelMessage) *external.State {
+	parcelReq := &external.Request{
+		TrackingId:  res.GetTrackingCode(),
+		DestCountry: res.GetDestination(),
+		Zipcode:     res.GetZipCode(),
+	}
+	latestState, err := job.parcelService.GetLatestParcelState(parcelReq)
+	if err != nil {
+		log.Print(err.Error())
+		return nil
+	} else {
+		log.Printf("Latest state found: %s", latestState)
+		return latestState
+	}
+}
+
+func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState *external.State) {
+	parcelMessage := &parcels.ParcelMessage{
+		Uuid:         res.GetUuid(),
+		TrackingCode: res.TrackingCode,
+		Name:         res.Name,
+		Origin:       res.Origin,
+		Destination:  res.Destination,
+		LastUpdate:   &latestState.Date,
+		Status:       &latestState.Status,
+		ZipCode:      res.ZipCode,
+		IsDone:       res.IsDone,
+	}
+	log.Printf("Saving new status")
+	job.grpcService.SaveParcel(parcelMessage)
 }

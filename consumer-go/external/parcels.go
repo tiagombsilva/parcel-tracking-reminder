@@ -6,7 +6,12 @@ import (
 	"log"
 )
 
-type ParcelService struct {
+type ParcelService interface {
+	GetParcel(parcelReq *Request) (*Tracking, error)
+	GetLatestParcelState(parcelReq *Request) (*State, error)
+}
+
+type ParcelServiceImpl struct {
 	handler Handler
 }
 
@@ -34,11 +39,11 @@ type ResponseError struct {
 	Error string `json:"error"`
 }
 
-func NewParcelService(handler Handler) *ParcelService {
-	return &ParcelService{handler}
+func NewParcelService(handler Handler) *ParcelServiceImpl {
+	return &ParcelServiceImpl{handler}
 }
 
-func (ps *ParcelService) GetParcel(parcelReq *Request) (*Tracking, error) {
+func (ps *ParcelServiceImpl) GetParcel(parcelReq *Request) (*Tracking, error) {
 	log.Printf("Fetching parcel from external parcelsapp")
 	jsonRes, err := ps.handler.PostParcel(parcelReq)
 	if err != nil {
@@ -51,7 +56,7 @@ func (ps *ParcelService) GetParcel(parcelReq *Request) (*Tracking, error) {
 	return jsonUnmarshal, nil
 }
 
-func (ps *ParcelService) GetLatestParcelState(parcelReq *Request) (*State, error) {
+func (ps *ParcelServiceImpl) GetLatestParcelState(parcelReq *Request) (*State, error) {
 	response, err := ps.GetParcel(parcelReq)
 	if err != nil {
 		return nil, err

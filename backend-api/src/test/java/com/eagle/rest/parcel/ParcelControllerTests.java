@@ -11,8 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +48,7 @@ public class ParcelControllerTests {
     public void getParcelById() throws Exception {
         final var account = getDummyAccount("discordId");
         final var parcel = getDummyParcel(account);
-        given(service.getParcel(1L)).willReturn(Optional.of(parcel));
+        given(service.getParcel("1")).willReturn(Optional.of(parcel));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/parcel/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().json("%s".formatted(getJson(parcel))));
@@ -59,7 +59,7 @@ public class ParcelControllerTests {
         final var account = getDummyAccount("discordId");
         final var parcel = getDummyParcel(account);
         final var parcelJson = getJson(parcel);
-        given(service.saveOrUpdateParcel(any())).willReturn(Optional.of(parcel));
+        given(service.saveOrUpdateParcel(any())).willReturn(parcel);
         mockMvc.perform(post("/api/v1/parcel")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(parcelJson))
@@ -69,12 +69,8 @@ public class ParcelControllerTests {
 
     @Test
     public void deleteParcel() throws Exception {
-        final var account = getDummyAccount("discordId");
-        final var parcel = getDummyParcel(account);
-        given(service.deleteParcel(1L)).willReturn(Optional.of(parcel));
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/parcel/{id}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(content().json("%s".formatted(getJson(parcel))));
+                .andExpect(status().isOk());
     }
 
     private String getJson(final Parcel parcel) throws JsonProcessingException {
@@ -87,12 +83,12 @@ public class ParcelControllerTests {
 
     private Parcel getDummyParcel(final Account account) {
         return Parcel.builder()
-                .uuid(1L)
+                .uuid("123l123l123")
                 .name("Dummy parcel")
                 .trackingCode("123123")
                 .origin("PT")
                 .destination("PT")
-                .lastUpdate(Timestamp.from(Instant.now()))
+                .lastUpdate(ZonedDateTime.from(Instant.now()))
                 .account(account)
                 .build();
     }
