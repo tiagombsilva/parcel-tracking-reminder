@@ -7,5 +7,6 @@ fn main() {
                 "../backend-api/src/main/proto/accounts.proto",
             ],
             &["../backend-api/src/main/proto"],
-        ).unwrap();
+        )
+        .unwrap();
 }
