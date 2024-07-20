@@ -3,9 +3,9 @@ mod internal {
     tonic::include_proto!("grpc.accounts");
 }
 
+use futures::stream::StreamExt;
 use internal::parcels_client::ParcelsClient;
 use tonic::Request;
-use futures::stream::StreamExt;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
