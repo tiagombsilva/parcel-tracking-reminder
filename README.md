@@ -15,9 +15,9 @@
 - [Rust] - Discord Bot
 - [Postgres] - Database
 
-## Installation
+## Starting
 
-docker-compose up
+Run script run-prd-compose.sh
 
 ## External API used for consumer
 
