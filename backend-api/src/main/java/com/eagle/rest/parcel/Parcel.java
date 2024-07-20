@@ -18,6 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.lang.Nullable;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -29,7 +30,7 @@ import java.time.ZonedDateTime;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "parcel")
-public class Parcel {
+public class Parcel implements Serializable {
     @Id
     private String uuid;
     private String trackingCode;

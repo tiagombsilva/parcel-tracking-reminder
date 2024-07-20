@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Getter
@@ -28,9 +29,9 @@ import java.util.Set;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "account")
-public class Account {
+public class Account implements Serializable {
     @Id
-    @Column(name = "discord_id", nullable = false, columnDefinition = "VARCHAR")
+    @Column(name = "discord_id", nullable = false)
     private String discordId;
     private String name;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
