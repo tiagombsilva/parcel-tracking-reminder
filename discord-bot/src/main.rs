@@ -10,9 +10,7 @@ use tonic::Request;
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = ParcelsClient::connect("http://[::1]:9090").await?;
 
-    let request = Request::new(());
-
-    let message = client.get_parcels(request).await?;
+    let message = client.get_parcels(Request::new(())).await?;
 
     println!("RESPONSE={:?}", message);
     Ok(())

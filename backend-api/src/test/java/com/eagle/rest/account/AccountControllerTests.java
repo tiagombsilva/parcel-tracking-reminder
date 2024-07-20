@@ -66,8 +66,7 @@ public class AccountControllerTests {
         final var account = getDummyAccount("discordId");
         given(service.deleteAccount("discordId")).willReturn(Optional.of(account));
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/account/{id}", "discordId"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("%s".formatted(getJson(account))));
+                .andExpect(status().isNoContent());
     }
 
     private String getJson(final Account parcel) throws JsonProcessingException {
