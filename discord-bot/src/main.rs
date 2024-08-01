@@ -1,23 +1,13 @@
-mod internal {
-    tonic::include_proto!("grpc.parcels");
-    tonic::include_proto!("grpc.accounts");
-}
+mod parcels;
 
-use futures::stream::StreamExt;
-use internal::parcels_client::ParcelsClient;
-use tonic::Request;
+use parcels::ParcelsServiceClient;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = ParcelsClient::connect("http://[::1]:9090").await?;
+    let mut client = ParcelsServiceClient::new("http://[::1]:9090").await?;
 
-    let mut stream = client.get_parcels(Request::new(())).await?.into_inner();
+    let parcels = client.get_parcels().await?;
 
-    while let Some(message) = stream.next().await {
-        match message {
-            Ok(parcel) => println!("Received parcel: {:?}", parcel),
-            Err(e) => eprintln!("Error receiving parcel: {:?}", e),
-        }
-    }
+    println!("Received parcels: {:?}", parcels);
     Ok(())
 }
