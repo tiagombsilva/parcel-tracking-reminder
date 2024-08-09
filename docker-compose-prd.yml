@@ -10,10 +10,20 @@ services:
       - POSTGRES_PASSWORD=1234
       - POSTGRES_USER=admin
       - POSTGRES_DB=tracking
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - "5672"
+      - "8080:15672"
+    environment:
+      - 'RABBITMQ_DEFAULT_PASS=secret'
+      - 'RABBITMQ_DEFAULT_USER=myuser'
   backend:
     container_name: backend-api
     depends_on:
       - db
+      - rabbitmq
     build:
       context: ./backend-api
       dockerfile: DockerfileProd
