@@ -3,7 +3,6 @@ package com.eagle.grpc;
 import com.eagle.grpc.parcels.lib.ParcelMessage;
 import com.eagle.grpc.parcels.lib.ParcelReq;
 import com.eagle.grpc.parcels.lib.ParcelsGrpc;
-import com.eagle.grpc.parcels.lib.SaveParcelMessage;
 import com.eagle.rest.parcel.Parcel;
 import com.eagle.rest.parcel.ParcelService;
 import com.google.protobuf.Empty;
@@ -29,12 +28,12 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
 
     static ParcelMessage getParcelMessage(final Parcel parcel) {
         return ParcelMessage.newBuilder()
-                .setUuid(parcel.getUuid())
+                .setTrackingCode(parcel.getTrackingCode())
                 .setName(parcel.getName())
+                .setUuid(getOrDefault(parcel.getUuid()))
                 .setDestination(getOrDefault(parcel.getDestination()))
                 .setLastUpdate(getOrDefault(parcel.getLastUpdate()))
                 .setOrigin(getOrDefault(parcel.getOrigin()))
-                .setTrackingCode(parcel.getTrackingCode())
                 .setStatus(getOrDefault(parcel.getStatus()))
                 .setZipCode(getOrDefault(parcel.getZipCode()))
                 .setIsDone(parcel.isDone())
@@ -57,7 +56,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
 
     @Override
     public void getParcelByTrackingCode(ParcelReq request, StreamObserver<ParcelMessage> responseObserver) {
-        var parcelOptional = parcelService.getParcelByTrackingCode(request.getTrackingCode());
+        var parcelOptional = parcelService.getParcel(request.getTrackingCode());
         if (parcelOptional.isPresent()) {
             var parcel = parcelOptional.get();
             ParcelMessage response = getParcelMessage(parcel);
@@ -69,7 +68,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
     }
 
     @Override
-    public void saveParcel(ParcelMessage request, StreamObserver<SaveParcelMessage> responseObserver) {
+    public void saveParcel(ParcelMessage request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
         var parcel = new Parcel();
         parcel.setUuid(request.getUuid());
         parcel.setName(request.getName());
@@ -80,9 +79,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
         parcel.setLastUpdate(ZonedDateTime.parse(request.getLastUpdate()));
         parcel.setZipCode(request.getZipCode());
         parcel.setDone(request.getIsDone());
-        var savedParcel = parcelService.saveOrUpdateParcel(parcel);
-        var spm = SaveParcelMessage.newBuilder().setIsSaved(savedParcel != null).build();
-        responseObserver.onNext(spm);
+        parcelService.saveOrUpdateParcel(parcel);
         responseObserver.onCompleted();
     }
 }

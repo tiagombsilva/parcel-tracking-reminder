@@ -59,9 +59,6 @@ public class AccountService {
         final Account account = getAccountById(discordId)
                 .orElseThrow(() -> new ResourceNotFoundException("Account not found"));
         parcel.setAccount(account);
-        if (StringUtils.isEmpty(parcel.getUuid())) {
-            parcel.setUuid(UUID.randomUUID().toString());
-        }
         parcelService.saveOrUpdateParcel(parcel);
         account.getParcels().add(parcel);
         repository.save(account);

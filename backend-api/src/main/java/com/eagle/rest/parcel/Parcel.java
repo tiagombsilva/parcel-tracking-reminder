@@ -32,8 +32,9 @@ import java.time.ZonedDateTime;
 @Table(name = "parcel")
 public class Parcel implements Serializable {
     @Id
-    private String uuid;
     private String trackingCode;
+    @Nullable
+    private String uuid;
     @Nullable
     private String name;
     private String origin;

@@ -32,24 +32,21 @@ public class ParcelService {
         return repository.getInProgressParcels();
     }
 
-    public Optional<Parcel> getParcel(final String uuid) {
-        return repository.findById(uuid);
+    public Optional<Parcel> getParcel(final String trackingCode) {
+        return repository.findById(trackingCode);
     }
 
     public Parcel saveOrUpdateParcel(final Parcel parcel) {
-        var savedParcel = repository.findById(parcel.getUuid());
+        var savedParcel = repository.findById(parcel.getTrackingCode());
         if (savedParcel.isPresent() && parcel.getAccount() == null) {
             parcel.setAccount(savedParcel.get().getAccount());
-        }
-        if (StringUtils.isEmpty(parcel.getUuid())) {
-            parcel.setUuid(UUID.randomUUID().toString());
         }
         return repository.save(parcel);
     }
 
     @Transactional
-    public void deleteParcel(final String parcelId) {
-        final Parcel parcel = repository.findById(parcelId).orElseThrow(
+    public void deleteParcel(final String trackingCode) {
+        final Parcel parcel = repository.findById(trackingCode).orElseThrow(
                 () -> new ResourceNotFoundException("Parcel not found")
         );
         Account account = parcel.getAccount();
@@ -60,10 +57,6 @@ public class ParcelService {
             accountRepository.save(account);
         }
 
-        repository.deleteById(parcel.getUuid());
-    }
-
-    public Optional<Parcel> getParcelByTrackingCode(final String trackingCode) {
-        return repository.findByTrackingCode(trackingCode);
+        repository.deleteById(parcel.getTrackingCode());
     }
 }

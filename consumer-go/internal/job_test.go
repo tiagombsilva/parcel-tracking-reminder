@@ -4,6 +4,8 @@ import (
 	"parcelsApi/external"
 	"parcelsApi/internal/common/parcels"
 	"testing"
+
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type dummyGrpcService struct{}
@@ -24,10 +26,8 @@ func (dummyGrpcService *dummyGrpcService) GetAllParcels() (parcels.Parcels_GetPa
 	return &dummyGetParcelsClient{count: 2}, nil
 }
 
-func (dummyGrpcService *dummyGrpcService) SaveParcel(parcelMessage *parcels.ParcelMessage) (*parcels.SaveParcelMessage, error) {
-	return &parcels.SaveParcelMessage{
-		IsSaved: true,
-	}, nil
+func (dummyGrpcService *dummyGrpcService) SaveParcel(parcelMessage *parcels.ParcelMessage) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, nil
 }
 
 func TestRun(t *testing.T) {

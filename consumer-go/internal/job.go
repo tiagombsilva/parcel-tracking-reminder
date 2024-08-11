@@ -67,7 +67,7 @@ func (job *JobImpl) getLatestState(res *parcels.ParcelMessage) *external.State {
 
 func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState *external.State) {
 	parcelMessage := &parcels.ParcelMessage{
-		Uuid:         res.GetUuid(),
+		Uuid:         res.Uuid,
 		TrackingCode: res.TrackingCode,
 		Name:         res.Name,
 		Origin:       res.Origin,
@@ -77,6 +77,14 @@ func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState 
 		ZipCode:      res.ZipCode,
 		IsDone:       res.IsDone,
 	}
-	log.Printf("Saving new status")
-	job.grpcService.SaveParcel(parcelMessage)
+	log.Printf("Saving new status...")
+	if res.LastUpdate != &latestState.Date || res.Uuid == nil || *res.Uuid == "" {
+		_, err := job.grpcService.SaveParcel(parcelMessage)
+		if err != nil {
+			log.Printf("Failed to save new Status %s", err)
+		} else {
+			//notify
+			log.Printf("Successfully saved new Status for parcel: %s", res)
+		}
+	}
 }

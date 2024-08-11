@@ -44,8 +44,8 @@ message AccountParcelMessage {
 
 message AccountSaveParcel {
   string discordId = 1;
-  string uuid = 2;
-  optional string trackingCode = 3;
+  string trackingCode = 3;
+  optional string uuid = 2;
   optional string name = 4;
   optional string origin = 5;
   optional string destination = 6;

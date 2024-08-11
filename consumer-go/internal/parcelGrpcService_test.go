@@ -22,7 +22,7 @@ func (dummyGetParcelsClient *dummyGetParcelsClient) Recv() (*parcels.ParcelMessa
 	if dummyGetParcelsClient.count > 0 {
 		dummyGetParcelsClient.count--
 		return &parcels.ParcelMessage{
-			Uuid: "123",
+			TrackingCode: "123",
 		}, nil
 	}
 	return nil, errors.New("Parcels empty")
@@ -60,10 +60,8 @@ func (dummyGrpcService *dummyExternalGrpcService) GetParcelByTrackingCode(ctx co
 	return &parcels.ParcelMessage{}, nil
 }
 
-func (dummyGrpcService *dummyExternalGrpcService) SaveParcel(ctx context.Context, in *parcels.ParcelMessage, opts ...grpc.CallOption) (*parcels.SaveParcelMessage, error) {
-	return &parcels.SaveParcelMessage{
-		IsSaved: true,
-	}, nil
+func (dummyGrpcService *dummyExternalGrpcService) SaveParcel(ctx context.Context, in *parcels.ParcelMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	return &emptypb.Empty{}, nil
 }
 
 func TestGetAllParcels(t *testing.T) {
@@ -77,18 +75,15 @@ func TestGetAllParcels(t *testing.T) {
 		t.Error("Expecting message")
 	}
 
-	if message.Uuid != "123" {
+	if message.TrackingCode != "123" {
 		t.Error("Expecting same Uuid")
 	}
 }
 
 func TestSaveParcel(t *testing.T) {
 	parcelServiceImpl := NewParcelGrpcServiceImpl(&dummyExternalGrpcService{})
-	res, err := parcelServiceImpl.SaveParcel(&parcels.ParcelMessage{})
+	_, err := parcelServiceImpl.SaveParcel(&parcels.ParcelMessage{})
 	if err != nil {
 		t.Error("Expected success Message")
-	}
-	if !res.IsSaved {
-		t.Error("Expected saved successfully")
 	}
 }
