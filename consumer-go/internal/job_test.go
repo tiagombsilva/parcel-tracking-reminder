@@ -26,7 +26,7 @@ func (dummyGrpcService *dummyGrpcService) GetAllParcels() (parcels.Parcels_GetPa
 	return &dummyGetParcelsClient{count: 2}, nil
 }
 
-func (dummyGrpcService *dummyGrpcService) SaveParcel(parcelMessage *parcels.ParcelMessage) (*emptypb.Empty, error) {
+func (dummyGrpcService *dummyGrpcService) SaveOrUpdateParcel(parcelMessage *parcels.ParcelMessage) (*emptypb.Empty, error) {
 	return &emptypb.Empty{}, nil
 }
 

@@ -56,11 +56,7 @@ func (dummyGrpcService *dummyExternalGrpcService) GetParcels(ctx context.Context
 	return &dummyGetParcelsClient{}, nil
 }
 
-func (dummyGrpcService *dummyExternalGrpcService) GetParcelByTrackingCode(ctx context.Context, in *parcels.ParcelReq, opts ...grpc.CallOption) (*parcels.ParcelMessage, error) {
-	return &parcels.ParcelMessage{}, nil
-}
-
-func (dummyGrpcService *dummyExternalGrpcService) SaveParcel(ctx context.Context, in *parcels.ParcelMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (dummyGrpcService *dummyExternalGrpcService) SaveOrUpdateParcel(ctx context.Context, in *parcels.ParcelMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	return &emptypb.Empty{}, nil
 }
 
@@ -82,7 +78,7 @@ func TestGetAllParcels(t *testing.T) {
 
 func TestSaveParcel(t *testing.T) {
 	parcelServiceImpl := NewParcelGrpcServiceImpl(&dummyExternalGrpcService{})
-	_, err := parcelServiceImpl.SaveParcel(&parcels.ParcelMessage{})
+	_, err := parcelServiceImpl.SaveOrUpdateParcel(&parcels.ParcelMessage{})
 	if err != nil {
 		t.Error("Expected success Message")
 	}

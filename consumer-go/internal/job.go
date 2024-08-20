@@ -79,11 +79,10 @@ func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState 
 	}
 	log.Printf("Saving new status...")
 	if res.LastUpdate != &latestState.Date || res.Uuid == nil || *res.Uuid == "" {
-		_, err := job.grpcService.SaveParcel(parcelMessage)
+		_, err := job.grpcService.SaveOrUpdateParcel(parcelMessage)
 		if err != nil {
 			log.Printf("Failed to save new Status %s", err)
 		} else {
-			//notify
 			log.Printf("Successfully saved new Status for parcel: %s", res)
 		}
 	}

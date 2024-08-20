@@ -1,7 +1,6 @@
 package com.eagle.grpc;
 
 import com.eagle.grpc.parcels.lib.ParcelMessage;
-import com.eagle.grpc.parcels.lib.ParcelReq;
 import com.eagle.grpc.parcels.lib.ParcelsGrpc;
 import com.eagle.rest.parcel.Parcel;
 import com.eagle.rest.parcel.ParcelService;
@@ -55,20 +54,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
     }
 
     @Override
-    public void getParcelByTrackingCode(ParcelReq request, StreamObserver<ParcelMessage> responseObserver) {
-        var parcelOptional = parcelService.getParcel(request.getTrackingCode());
-        if (parcelOptional.isPresent()) {
-            var parcel = parcelOptional.get();
-            ParcelMessage response = getParcelMessage(parcel);
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-        } else {
-            responseObserver.onError(new StatusRuntimeException(Status.NOT_FOUND));
-        }
-    }
-
-    @Override
-    public void saveParcel(ParcelMessage request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
+    public void saveOrUpdateParcel(ParcelMessage request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
         var parcel = new Parcel();
         parcel.setUuid(request.getUuid());
         parcel.setName(request.getName());

@@ -28,6 +28,7 @@ type AccountsClient interface {
 	SaveAccount(ctx context.Context, in *AccountMessage, opts ...grpc.CallOption) (*SaveAccountResponse, error)
 	GetAccountParcels(ctx context.Context, in *AccountReq, opts ...grpc.CallOption) (Accounts_GetAccountParcelsClient, error)
 	SaveParcel(ctx context.Context, in *AccountSaveParcel, opts ...grpc.CallOption) (*SaveAccountResponse, error)
+	Notify(ctx context.Context, in *AccountSaveParcel, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type accountsClient struct {
@@ -129,6 +130,15 @@ func (c *accountsClient) SaveParcel(ctx context.Context, in *AccountSaveParcel, 
 	return out, nil
 }
 
+func (c *accountsClient) Notify(ctx context.Context, in *AccountSaveParcel, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/grpc.accounts.Accounts/Notify", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AccountsServer is the server API for Accounts service.
 // All implementations must embed UnimplementedAccountsServer
 // for forward compatibility
@@ -138,6 +148,7 @@ type AccountsServer interface {
 	SaveAccount(context.Context, *AccountMessage) (*SaveAccountResponse, error)
 	GetAccountParcels(*AccountReq, Accounts_GetAccountParcelsServer) error
 	SaveParcel(context.Context, *AccountSaveParcel) (*SaveAccountResponse, error)
+	Notify(context.Context, *AccountSaveParcel) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAccountsServer()
 }
 
@@ -159,6 +170,9 @@ func (UnimplementedAccountsServer) GetAccountParcels(*AccountReq, Accounts_GetAc
 }
 func (UnimplementedAccountsServer) SaveParcel(context.Context, *AccountSaveParcel) (*SaveAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveParcel not implemented")
+}
+func (UnimplementedAccountsServer) Notify(context.Context, *AccountSaveParcel) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Notify not implemented")
 }
 func (UnimplementedAccountsServer) mustEmbedUnimplementedAccountsServer() {}
 
@@ -269,6 +283,24 @@ func _Accounts_SaveParcel_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Accounts_Notify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AccountSaveParcel)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AccountsServer).Notify(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpc.accounts.Accounts/Notify",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AccountsServer).Notify(ctx, req.(*AccountSaveParcel))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Accounts_ServiceDesc is the grpc.ServiceDesc for Accounts service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -287,6 +319,10 @@ var Accounts_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SaveParcel",
 			Handler:    _Accounts_SaveParcel_Handler,
+		},
+		{
+			MethodName: "Notify",
+			Handler:    _Accounts_Notify_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

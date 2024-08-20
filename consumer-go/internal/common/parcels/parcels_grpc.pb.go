@@ -24,8 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ParcelsClient interface {
 	GetParcels(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Parcels_GetParcelsClient, error)
-	GetParcelByTrackingCode(ctx context.Context, in *ParcelReq, opts ...grpc.CallOption) (*ParcelMessage, error)
-	SaveParcel(ctx context.Context, in *ParcelMessage, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	SaveOrUpdateParcel(ctx context.Context, in *ParcelMessage, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type parcelsClient struct {
@@ -68,18 +67,9 @@ func (x *parcelsGetParcelsClient) Recv() (*ParcelMessage, error) {
 	return m, nil
 }
 
-func (c *parcelsClient) GetParcelByTrackingCode(ctx context.Context, in *ParcelReq, opts ...grpc.CallOption) (*ParcelMessage, error) {
-	out := new(ParcelMessage)
-	err := c.cc.Invoke(ctx, "/grpc.parcels.Parcels/GetParcelByTrackingCode", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *parcelsClient) SaveParcel(ctx context.Context, in *ParcelMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *parcelsClient) SaveOrUpdateParcel(ctx context.Context, in *ParcelMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/grpc.parcels.Parcels/SaveParcel", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grpc.parcels.Parcels/SaveOrUpdateParcel", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,8 +81,7 @@ func (c *parcelsClient) SaveParcel(ctx context.Context, in *ParcelMessage, opts 
 // for forward compatibility
 type ParcelsServer interface {
 	GetParcels(*emptypb.Empty, Parcels_GetParcelsServer) error
-	GetParcelByTrackingCode(context.Context, *ParcelReq) (*ParcelMessage, error)
-	SaveParcel(context.Context, *ParcelMessage) (*emptypb.Empty, error)
+	SaveOrUpdateParcel(context.Context, *ParcelMessage) (*emptypb.Empty, error)
 	mustEmbedUnimplementedParcelsServer()
 }
 
@@ -103,11 +92,8 @@ type UnimplementedParcelsServer struct {
 func (UnimplementedParcelsServer) GetParcels(*emptypb.Empty, Parcels_GetParcelsServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetParcels not implemented")
 }
-func (UnimplementedParcelsServer) GetParcelByTrackingCode(context.Context, *ParcelReq) (*ParcelMessage, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetParcelByTrackingCode not implemented")
-}
-func (UnimplementedParcelsServer) SaveParcel(context.Context, *ParcelMessage) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SaveParcel not implemented")
+func (UnimplementedParcelsServer) SaveOrUpdateParcel(context.Context, *ParcelMessage) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SaveOrUpdateParcel not implemented")
 }
 func (UnimplementedParcelsServer) mustEmbedUnimplementedParcelsServer() {}
 
@@ -143,38 +129,20 @@ func (x *parcelsGetParcelsServer) Send(m *ParcelMessage) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Parcels_GetParcelByTrackingCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ParcelReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ParcelsServer).GetParcelByTrackingCode(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpc.parcels.Parcels/GetParcelByTrackingCode",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ParcelsServer).GetParcelByTrackingCode(ctx, req.(*ParcelReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Parcels_SaveParcel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Parcels_SaveOrUpdateParcel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ParcelMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ParcelsServer).SaveParcel(ctx, in)
+		return srv.(ParcelsServer).SaveOrUpdateParcel(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpc.parcels.Parcels/SaveParcel",
+		FullMethod: "/grpc.parcels.Parcels/SaveOrUpdateParcel",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ParcelsServer).SaveParcel(ctx, req.(*ParcelMessage))
+		return srv.(ParcelsServer).SaveOrUpdateParcel(ctx, req.(*ParcelMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -187,12 +155,8 @@ var Parcels_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*ParcelsServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetParcelByTrackingCode",
-			Handler:    _Parcels_GetParcelByTrackingCode_Handler,
-		},
-		{
-			MethodName: "SaveParcel",
-			Handler:    _Parcels_SaveParcel_Handler,
+			MethodName: "SaveOrUpdateParcel",
+			Handler:    _Parcels_SaveOrUpdateParcel_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
