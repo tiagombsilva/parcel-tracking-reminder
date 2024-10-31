@@ -3,10 +3,18 @@ name = "discord-bot"
 version = "0.1.0"
 edition = "2021"
 
-[[bin]] # Bin to run man
-name = "main"
-path = "src/main.rs"
+#[[bin]] # Bin to run main
+#name = "main"
+#path = "src/main.rs"
+
+[[bin]] # Bin to run the HelloWorld gRPC server
+name = "notificationGrpc-server"
+path = "src/notification_server.rs"
 
 [dependencies]
-amqprs = "1.7.0"
-tokio = { version = "1.0", features = ["full"] }
+prost = "0.13.3"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+tonic = "0.12.3"
+
+[build-dependencies]
+tonic-build = "0.12.3"

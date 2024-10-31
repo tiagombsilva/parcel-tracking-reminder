@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package notification;
 
-service Notification {
-    rpc sendNotification(NotificationRequest) returns (NotificationResponse);
+service NotificationService {
+    rpc send_notification(NotificationReq) returns (NotificationRes){}
 }
 
-message NotificationRequest {
+message NotificationReq {
     string discordId = 1;
     string trackingCode = 2;
     string name = 3;
@@ -14,7 +14,7 @@ message NotificationRequest {
     bool isDone = 5;
 }
 
-message NotificationResponse {
+message NotificationRes {
     string status = 1;
 }
 
