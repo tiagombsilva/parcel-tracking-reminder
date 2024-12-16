@@ -54,6 +54,20 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
     }
 
     @Override
+    public void getParcelsInProgress(Empty request, StreamObserver<ParcelMessage> responseObserver) {
+        var parcels = parcelService.getAllParcels();
+        for (var parcel : parcels) {
+            ParcelMessage response = getParcelMessage(parcel);
+            responseObserver.onNext(response);
+        }
+        if (parcels.isEmpty()) {
+            responseObserver.onError(new StatusRuntimeException(Status.NOT_FOUND));
+        } else {
+            responseObserver.onCompleted();
+        }
+    }
+
+    @Override
     public void saveOrUpdateParcel(ParcelMessage request, StreamObserver<com.google.protobuf.Empty> responseObserver) {
         var parcel = new Parcel();
         parcel.setUuid(request.getUuid());
