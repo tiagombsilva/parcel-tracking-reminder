@@ -36,10 +36,11 @@ public class AccountService {
         return Optional.of(repository.save(account));
     }
 
-    public Optional<Account> deleteAccount(final String discordId) {
-        final Optional<Account> AccountOptional = repository.findById(discordId);
-        AccountOptional.ifPresent(p -> repository.deleteById(discordId));
-        return AccountOptional;
+    public void deleteAccount(final String discordId) {
+        final Account account = repository.findById(discordId).orElseThrow(
+                () -> new ResourceNotFoundException("Parcel not found")
+        );
+        repository.delete(account);
     }
 
     public Optional<Account> getAccountById(final String discordId) {

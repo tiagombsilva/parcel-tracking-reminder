@@ -47,8 +47,7 @@ public class ParcelController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteParcel(@PathVariable("id") String parcelUuid) throws
-            ResourceHasBondsException {
+    public ResponseEntity<Void> deleteParcel(@PathVariable("id") String parcelUuid) {
         service.deleteParcel(parcelUuid);
         return ResponseEntity.noContent().build();
     }

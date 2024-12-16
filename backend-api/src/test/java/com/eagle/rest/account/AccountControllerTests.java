@@ -63,8 +63,6 @@ public class AccountControllerTests {
 
     @Test
     public void deleteAccount() throws Exception {
-        final var account = getDummyAccount("discordId");
-        given(service.deleteAccount("discordId")).willReturn(Optional.of(account));
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/account/{id}", "discordId"))
                 .andExpect(status().isNoContent());
     }

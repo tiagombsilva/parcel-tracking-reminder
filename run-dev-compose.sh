@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Stopping container and remove image"
-docker-compose -f docker-compose-dev.yml down > /dev/null | true
+docker compose -f docker-compose-dev.yml down > /dev/null | true
 
 echo "building project"
 cd backend-api/
@@ -9,7 +9,7 @@ cd backend-api/
 
 echo "Starting Services"
 cd ../
-docker-compose -f docker-compose-dev.yml up --build -d
+docker compose -f docker-compose-dev.yml up --build -d
 
 echo "Attaching to API"
 docker logs -f backend-api
