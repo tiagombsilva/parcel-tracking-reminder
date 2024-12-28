@@ -21,7 +21,7 @@ func NewJobImpl(parcelService external.ParcelService, grpcService ParcelGrpcServ
 }
 
 func (job *JobImpl) Run() {
-	grpcResponse, err := job.grpcService.GetAllParcels()
+	grpcResponse, err := job.grpcService.GetAllParcelsInProgress()
 	if err != nil {
 		log.Printf("Failed to to get data from GRPC")
 		return
@@ -31,9 +31,6 @@ func (job *JobImpl) Run() {
 		resp, err := grpcResponse.Recv()
 		if err != nil {
 			break
-		}
-		if resp.GetIsDone() {
-			continue
 		}
 		job.wg.Add(1)
 		go job.updatePackageToLatestState(resp)
@@ -78,7 +75,7 @@ func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState 
 		IsDone:       res.IsDone,
 	}
 	log.Printf("Saving new status...")
-	if res.LastUpdate != &latestState.Date || res.Uuid == nil || *res.Uuid == "" {
+	if res.LastUpdate != &latestState.Date {
 		_, err := job.grpcService.SaveOrUpdateParcel(parcelMessage)
 		if err != nil {
 			log.Printf("Failed to save new Status %s", err)

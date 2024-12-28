@@ -3,14 +3,12 @@ package com.eagle.rest.parcel;
 import com.eagle.rest.account.Account;
 import com.eagle.rest.account.AccountRepository;
 import com.eagle.rest.exception.ResourceNotFoundException;
-import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class ParcelService {

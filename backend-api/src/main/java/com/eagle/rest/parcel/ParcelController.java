@@ -1,6 +1,5 @@
 package com.eagle.rest.parcel;
 
-import com.eagle.rest.exception.ResourceHasBondsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

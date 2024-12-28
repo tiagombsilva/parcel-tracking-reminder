@@ -9,11 +9,19 @@
 
 ## Tech
 
-- [Spring-Boot] - Backend REST API (Browser)
-- [Spring-Boot] - Backend gRPC API (Between Consumer Go and SpringBoot and Discord API)
-- [Go] - Consumer of Parcels API
-- [Rust] - Discord Bot
-- [Postgres] - Database
+[Go] Service:
+    - Fetches updates from the external API.
+    - Determines if there's a change in parcel status.
+    - Stores changes in the Java REST API.
+    - If a change is detected, triggers a notification via gRPC
+
+[Java] REST API:
+    - Acts as the central database manager for storing and retrieving tracking updates.
+    - Exposes endpoints to fetch Accounts and Parcel data
+
+[Rust] Discord Bot:
+    - Listens for gRPC notifications.
+    - Sends Discord messages to users based on the provided Discord IDs and update details.
 
 ## Starting
 

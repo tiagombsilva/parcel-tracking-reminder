@@ -3,14 +3,12 @@ package com.eagle.rest.account;
 import com.eagle.rest.exception.ResourceNotFoundException;
 import com.eagle.rest.parcel.Parcel;
 import com.eagle.rest.parcel.ParcelService;
-import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class AccountService {
