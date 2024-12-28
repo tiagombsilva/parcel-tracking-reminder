@@ -15,7 +15,7 @@
 - Stores changes using Java gRPC Service
 - If a change is detected, triggers a notification via gRPC to Rust Service
 
-[Java] REST / gRPC Service:
+[Java] gRPC Service / REST:
 - Acts as the central database manager for storing and retrieving tracking updates.
 - Exposes endpoints to fetch Accounts and Parcel data
 
