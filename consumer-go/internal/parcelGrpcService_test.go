@@ -56,13 +56,17 @@ func (dummyGrpcService *dummyExternalGrpcService) GetParcels(ctx context.Context
 	return &dummyGetParcelsClient{}, nil
 }
 
+func (dummyGrpcService *dummyExternalGrpcService) GetParcelsInProgress(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (parcels.Parcels_GetParcelsInProgressClient, error) {
+	return &dummyGetParcelsClient{}, nil
+}
+
 func (dummyGrpcService *dummyExternalGrpcService) SaveOrUpdateParcel(ctx context.Context, in *parcels.ParcelMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	return &emptypb.Empty{}, nil
 }
 
 func TestGetAllParcels(t *testing.T) {
 	parcelServiceImpl := NewParcelGrpcServiceImpl(&dummyExternalGrpcService{})
-	client, err := parcelServiceImpl.GetAllParcels()
+	client, err := parcelServiceImpl.GetParcelsInProgress()
 	if err != nil {
 		t.Error("Expecting client created")
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 type ParcelGrpcService interface {
-	GetAllParcels() (parcels.Parcels_GetParcelsClient, error)
+	GetParcelsInProgress() (parcels.Parcels_GetParcelsInProgressClient, error)
 	SaveOrUpdateParcel(parcelMessage *parcels.ParcelMessage) (*emptypb.Empty, error)
 }
 
@@ -22,8 +22,8 @@ func NewParcelGrpcServiceImpl(parcelClient parcels.ParcelsClient) *ParcelGrpcSer
 	}
 }
 
-func (service *ParcelGrpcServiceImpl) GetAllParcels() (parcels.Parcels_GetParcelsClient, error) {
-	return service.parcelClient.GetParcels(context.Background(), &emptypb.Empty{})
+func (service *ParcelGrpcServiceImpl) GetParcelsInProgress() (parcels.Parcels_GetParcelsInProgressClient, error) {
+	return service.parcelClient.GetParcelsInProgress(context.Background(), &emptypb.Empty{})
 }
 
 func (service *ParcelGrpcServiceImpl) SaveOrUpdateParcel(parcelMessage *parcels.ParcelMessage) (*emptypb.Empty, error) {

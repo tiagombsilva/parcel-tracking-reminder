@@ -3,7 +3,7 @@
 echo "Stopping container and remove image"
 docker compose -f docker-compose-dev.yml down > /dev/null | true
 
-echo "building project"
+echo "building maven project"
 cd backend-api/
 ./mvnw install -DskipTests
 

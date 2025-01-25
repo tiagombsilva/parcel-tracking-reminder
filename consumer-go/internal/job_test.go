@@ -22,7 +22,7 @@ func (dps *dummyParcelService) GetParcel(parcelReq *external.Request) (*external
 	}, nil
 }
 
-func (dummyGrpcService *dummyGrpcService) GetAllParcels() (parcels.Parcels_GetParcelsClient, error) {
+func (dummyGrpcService *dummyGrpcService) GetParcelsInProgress() (parcels.Parcels_GetParcelsInProgressClient, error) {
 	return &dummyGetParcelsClient{count: 2}, nil
 }
 

@@ -21,7 +21,7 @@ func NewJobImpl(parcelService external.ParcelService, grpcService ParcelGrpcServ
 }
 
 func (job *JobImpl) Run() {
-	grpcResponse, err := job.grpcService.GetAllParcelsInProgress()
+	grpcResponse, err := job.grpcService.GetParcelsInProgress()
 	if err != nil {
 		log.Printf("Failed to to get data from GRPC")
 		return
