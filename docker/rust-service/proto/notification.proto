@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package notification;
+
+service NotificationService {
+    rpc send_notification(NotificationReq) returns (NotificationRes){}
+}
+
+message NotificationReq {
+    string discordId = 1;
+    string trackingCode = 2;
+    string name = 3;
+    string lastUpdate = 4;
+    bool isDone = 5;
+}
+
+message NotificationRes {
+    string status = 1;
+}
+
