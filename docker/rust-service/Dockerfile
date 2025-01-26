@@ -8,7 +8,7 @@ COPY proto ./proto
 
 RUN apt-get update && apt-get install -y protobuf-compiler && rm -rf /var/lib/apt/lists/*
 
-ENV OUT_DIR=/app/proto
+ENV OUT_DIR=/app/target/release/out
 
 RUN cargo build --release
 

@@ -4,7 +4,7 @@ echo "Stopping container and remove image"
 docker compose -f docker-compose-dev.yml down > /dev/null | true
 
 echo "building maven project"
-cd backend-api/
+cd docker/java-service
 ./mvnw install -DskipTests
 
 echo "Starting Services"
