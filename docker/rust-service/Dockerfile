@@ -1,14 +1,13 @@
-FROM rust:1.73 AS build
+FROM rust:latest AS build
 
 WORKDIR /app
 
 COPY Cargo.toml ./
 COPY src ./src
 COPY proto ./proto
+COPY build.rs ./
 
 RUN apt-get update && apt-get install -y protobuf-compiler && rm -rf /var/lib/apt/lists/*
-
-ENV OUT_DIR=/app/target/release/out
 
 RUN cargo build --release
 
@@ -19,6 +18,6 @@ FROM gcr.io/distroless/base
 
 WORKDIR /app
 
-COPY --from=build /app/target/release/rust-service .
+COPY --from=build /app/target/release/discord-bot .
 
-ENTRYPOINT ["/app/rust-service"]
+ENTRYPOINT ["/app/rust-discord-bot"]

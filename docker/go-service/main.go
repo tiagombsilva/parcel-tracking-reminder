@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	serverAddr   = flag.String("addr", "localhost:9090", "The grpc server host:port")
+	serverAddr   = flag.String("addr", "java-service:9090", "The grpc server host:port")
 	cronSchedule = flag.String("cron", "0 12 * * *", "Cron schedule")
 	apiUrl       = "https://parcelsapp.com/api/v3/shipments/tracking"
 )
@@ -39,7 +39,7 @@ func GetParcelService() external.ParcelService {
 }
 
 func GetGrpcConnection(serverAddr *string) internal.ParcelGrpcService {
-	conn, err := grpc.Dial(*serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(*serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("Failed to setup connection to Grpc server")
 	}

@@ -1,0 +1,8 @@
+# Building and tests
+FROM openjdk:21-slim AS dev
+
+WORKDIR /app
+
+COPY . /app/
+
+CMD ["./mvnw", "clean", "spring-boot:run"]
