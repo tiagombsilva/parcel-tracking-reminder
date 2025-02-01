@@ -3,7 +3,7 @@ package internal
 import (
 	"context"
 	"errors"
-	"parcelsApi/internal/common/parcels"
+	"go-service/internal/common/parcels"
 	"testing"
 
 	"google.golang.org/grpc"

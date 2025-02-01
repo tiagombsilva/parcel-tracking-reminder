@@ -2,18 +2,18 @@ package main
 
 import (
 	"flag"
+	"go-service/external"
+	"go-service/internal"
+	"go-service/internal/common/parcels"
 	"log"
 	"net/http"
-	"parcelsApi/external"
-	"parcelsApi/internal"
-	"parcelsApi/internal/common/parcels"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 var (
-	serverAddr   = flag.String("addr", "java-service:9090", "The grpc server host:port")
+	serverAddr   = flag.String("addr", "localhost:9090", "The grpc server host:port")
 	cronSchedule = flag.String("cron", "0 12 * * *", "Cron schedule")
 	apiUrl       = "https://parcelsapp.com/api/v3/shipments/tracking"
 )
@@ -34,7 +34,11 @@ func main() {
 }
 
 func GetParcelService() external.ParcelService {
-	handler := external.NewParcelHandler(http.DefaultClient, apiUrl)
+	config, err := internal.ReadConfig("resources/config.json")
+	if err != nil {
+		log.Fatal("Failed to read config")
+	}
+	handler := external.NewParcelHandler(http.DefaultClient, apiUrl, config.ParcelsApiToken)
 	return external.NewParcelService(handler)
 }
 

@@ -2,12 +2,12 @@ package external
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 type Handler interface {
@@ -17,6 +17,7 @@ type Handler interface {
 type ParcelHandler struct {
 	client *http.Client
 	apiUrl string
+	apiKey string
 }
 
 type ParcelRequest struct {
@@ -31,15 +32,16 @@ type Request struct {
 	Zipcode     string `json:"zipcode"`
 }
 
-func NewParcelHandler(client *http.Client, apiUrl string) *ParcelHandler {
+func NewParcelHandler(client *http.Client, apiUrl string, apiKey string) *ParcelHandler {
 	return &ParcelHandler{
 		client: client,
 		apiUrl: apiUrl,
+		apiKey: apiKey,
 	}
 }
 
 func (handler *ParcelHandler) PostParcel(reqParcels *Request) ([]byte, error) {
-	data := getJsonReq(reqParcels)
+	data := handler.getJsonReq(reqParcels)
 	base, _ := url.Parse(handler.apiUrl)
 	jsonReq, _ := json.Marshal(data)
 	log.Println("Sending post with body: ", data)
@@ -53,10 +55,16 @@ func (handler *ParcelHandler) PostParcel(reqParcels *Request) ([]byte, error) {
 	return nil, err
 }
 
-func getJsonReq(parcelReq *Request) *ParcelRequest {
+func (handler *ParcelHandler) getJsonReq(parcelReq *Request) *ParcelRequest {
+
+	apiKey, err := base64.StdEncoding.DecodeString(handler.apiKey)
+	if err != nil {
+		log.Fatal("Failed to decode apiKey")
+	}
+
 	return &ParcelRequest{
 		Language:  "en",
-		ApiKey:    os.Getenv("parcelsApiToken"),
+		ApiKey:    string(apiKey),
 		Shipments: []Request{*parcelReq},
 	}
 }

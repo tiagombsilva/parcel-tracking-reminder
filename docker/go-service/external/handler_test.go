@@ -40,7 +40,7 @@ func TestHandlerPost(t *testing.T) {
 
 	os.Setenv("parcelsApiToken", "test_api_key")
 
-	handler := NewParcelHandler(testServer.Client(), testServer.URL)
+	handler := NewParcelHandler(testServer.Client(), testServer.URL, "123123")
 
 	req := &Request{
 		TrackingId:  "123",

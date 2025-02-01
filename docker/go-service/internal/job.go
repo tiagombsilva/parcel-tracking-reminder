@@ -1,9 +1,9 @@
 package internal
 
 import (
+	"go-service/external"
+	"go-service/internal/common/parcels"
 	"log"
-	"parcelsApi/external"
-	"parcelsApi/internal/common/parcels"
 	"sync"
 )
 

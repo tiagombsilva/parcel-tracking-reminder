@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"parcelsApi/external"
-	"parcelsApi/internal/common/parcels"
+	"go-service/external"
+	"go-service/internal/common/parcels"
 	"testing"
 
 	"google.golang.org/protobuf/types/known/emptypb"

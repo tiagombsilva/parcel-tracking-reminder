@@ -2,7 +2,7 @@ package internal
 
 import (
 	"context"
-	"parcelsApi/internal/common/parcels"
+	"go-service/internal/common/parcels"
 
 	"google.golang.org/protobuf/types/known/emptypb"
 )
