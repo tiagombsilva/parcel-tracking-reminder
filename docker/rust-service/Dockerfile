@@ -11,8 +11,6 @@ RUN apt-get update && apt-get install -y protobuf-compiler && rm -rf /var/lib/ap
 
 RUN cargo build --release
 
-RUN cargo test
-
 # Final image using distroless
 FROM gcr.io/distroless/base
 

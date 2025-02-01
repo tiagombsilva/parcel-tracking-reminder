@@ -7,7 +7,7 @@ COPY . /app/
 
 RUN chmod +x ./mvnw
 
-RUN ./mvnw install
+RUN ./mvnw package
 
 # Final image using distroless
 FROM gcr.io/distroless/java21-debian12

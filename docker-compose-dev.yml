@@ -26,6 +26,7 @@ services:
     volumes:
       - ./docker/java-service:/app
       - ~/.m2:/root/.m2
+      - ./docker/scripts:/usr/local/bin
     ports:
       - "8080:8080"
       - "9090:9090"
@@ -36,14 +37,13 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./docker/rust-service:/app
-      - ~/.cargo/registry:/usr/local/cargo/registry        # Share Cargo's registry
-      - ~/.cargo/git:/usr/local/cargo/git                  # Share Cargo's Git cache
-      - ./docker/rust-service/target:/app/target           # Share target directory
+      - ~/.cargo/registry:/usr/local/cargo/registry
+      - ~/.cargo/git:/usr/local/cargo/git
+      - ./docker/rust-service/target:/app/target
     ports:
       - "50051:50051"
   go-service:
     depends_on:
-      - db
       - java-service
     build:
       context: ./docker/go-service

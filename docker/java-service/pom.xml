@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.eagle</groupId>
     <artifactId>parcel-tracking-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>parcel-tracking-api</name>
     <description>Backend API for Parcel Tracking Reminder</description>
     <properties>
