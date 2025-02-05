@@ -4,6 +4,7 @@ import (
 	"go-service/external"
 	"go-service/internal/common/parcels"
 	"log"
+	"strings"
 	"sync"
 )
 
@@ -26,7 +27,7 @@ func (job *JobImpl) Run() {
 		log.Printf("Failed to to get data from GRPC")
 		return
 	}
-	log.Printf("Updating all Parcels from GRPC...")
+	log.Printf("Starting to update parcels. Current GRPC response: %v", grpcResponse)
 	for {
 		resp, err := grpcResponse.Recv()
 		if err != nil {
@@ -42,7 +43,9 @@ func (job *JobImpl) Run() {
 func (job *JobImpl) updatePackageToLatestState(res *parcels.ParcelMessage) {
 	log.Printf("Updating Parcel '%s'", res)
 	latestState := job.getLatestState(res)
-	job.updateToLatestState(res, latestState)
+	if latestState != nil {
+		job.updateToLatestState(res, latestState)
+	}
 	defer job.wg.Done()
 }
 
@@ -72,10 +75,11 @@ func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState 
 		LastUpdate:   &latestState.Date,
 		Status:       &latestState.Status,
 		ZipCode:      res.ZipCode,
-		IsDone:       res.IsDone,
 	}
-	log.Printf("Saving new status...")
-	if res.LastUpdate != &latestState.Date {
+	isDelivered := strings.Contains(latestState.Status, "Delivered")
+	parcelMessage.IsDone = &isDelivered
+	if job.checkDate(res.LastUpdate, &latestState.Date) {
+		log.Printf("Saving new status...")
 		_, err := job.grpcService.SaveOrUpdateParcel(parcelMessage)
 		if err != nil {
 			log.Printf("Failed to save new Status %s", err)
@@ -83,4 +87,10 @@ func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState 
 			log.Printf("Successfully saved new Status for parcel: %s", res)
 		}
 	}
+}
+
+func (job *JobImpl) checkDate(date *string, date2 *string) bool {
+	dateParsed := (*date)[:13]
+	dateParsed2 := (*date2)[:13]
+	return strings.Compare(dateParsed, dateParsed2) == 1
 }

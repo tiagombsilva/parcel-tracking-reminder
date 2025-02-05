@@ -58,7 +58,7 @@ func (ps *ParcelServiceImpl) GetParcel(parcelReq *Request) (*Tracking, error) {
 
 func (ps *ParcelServiceImpl) GetLatestParcelState(parcelReq *Request) (*State, error) {
 	response, err := ps.GetParcel(parcelReq)
-	if err != nil {
+	if err != nil || len(response.Shipments) == 0 {
 		return nil, err
 	}
 	return &response.Shipments[len(response.Shipments)-1].LastState, nil

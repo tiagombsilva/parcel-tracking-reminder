@@ -80,6 +80,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
         parcel.setZipCode(request.getZipCode());
         parcel.setDone(request.getIsDone());
         parcelService.saveOrUpdateParcel(parcel);
+        responseObserver.onNext(com.google.protobuf.Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 }
