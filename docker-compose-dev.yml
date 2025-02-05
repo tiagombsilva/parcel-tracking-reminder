@@ -40,8 +40,6 @@ services:
       - ~/.cargo/registry:/usr/local/cargo/registry
       - ~/.cargo/git:/usr/local/cargo/git
       - ./docker/rust-service/target:/app/target
-    ports:
-      - "50051:50051"
   go-service:
     depends_on:
       - java-service
@@ -53,5 +51,3 @@ services:
       - ./docker/go-service:/app
       - ~/.cache/go:/root/.cache/go
       - ./docker/scripts:/usr/local/bin
-    ports:
-      - "8081:8081"
