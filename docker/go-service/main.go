@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	serverAddr   = flag.String("addr", "localhost:9090", "The grpc server host:port")
+	serverAddr   = flag.String("addr", "java-service:9090", "The grpc server host:port")
 	cronSchedule = flag.String("cron", "0 12 * * *", "Cron schedule")
 	apiUrl       = "https://parcelsapp.com/api/v3/shipments/tracking"
 )
@@ -23,7 +23,7 @@ func main() {
 	parcelService := GetParcelService()
 	grpcService := GetGrpcConnection(serverAddr)
 	job := internal.NewJobImpl(parcelService, grpcService)
-
+	log.Printf(*serverAddr)
 	job.Run()
 	//cron := cron.New()
 	//cron.AddJob(*cronSchedule, job)

@@ -27,14 +27,19 @@ func (job *JobImpl) Run() {
 		log.Printf("Failed to to get data from GRPC")
 		return
 	}
-	log.Printf("Starting to update parcels. Current GRPC response: %v", grpcResponse)
+	log.Printf("Starting to update parcels")
 	for {
 		resp, err := grpcResponse.Recv()
 		if err != nil {
 			break
 		}
-		job.wg.Add(1)
-		go job.updatePackageToLatestState(resp)
+		IsDelivered := resp.GetIsDone()
+		if !IsDelivered {
+			job.wg.Add(1)
+			go job.updatePackageToLatestState(resp)
+		} else {
+			log.Printf("Package is delivered '%s'", resp)
+		}
 	}
 	job.wg.Wait()
 	log.Print("All Parcels updated!")
