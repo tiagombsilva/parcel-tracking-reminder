@@ -1,15 +1,18 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"flag"
 	"go-service/external"
 	"go-service/internal"
 	"go-service/internal/common/parcels"
 	"log"
 	"net/http"
+	"os"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 )
 
 var (
@@ -43,7 +46,26 @@ func GetParcelService() external.ParcelService {
 }
 
 func GetGrpcConnection(serverAddr *string) internal.ParcelGrpcService {
-	conn, err := grpc.NewClient(*serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cert, err := os.ReadFile("server-cert.pem")
+	if err != nil {
+		log.Fatalf("failed to read server certificate: %v", err)
+	}
+
+	// Create a certificate pool and add the server's certificate
+	certPool := x509.NewCertPool()
+	if !certPool.AppendCertsFromPEM(cert) {
+		log.Fatalf("failed to add server certificate to pool")
+	}
+
+	// Create TLS configuration
+	tlsConfig := &tls.Config{
+		RootCAs: certPool,
+	}
+
+	// Create gRPC credentials from the TLS configuration
+	creds := credentials.NewTLS(tlsConfig)
+
+	conn, err := grpc.NewClient(*serverAddr, grpc.WithTransportCredentials(creds))
 	if err != nil {
 		log.Fatal("Failed to setup connection to Grpc server")
 	}

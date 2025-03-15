@@ -70,20 +70,20 @@ func (job *JobImpl) getLatestState(res *parcels.ParcelMessage) *external.State {
 	}
 }
 
-func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, latestState *external.State) {
+func (job *JobImpl) updateToLatestState(res *parcels.ParcelMessage, lastState *external.State) {
 	parcelMessage := &parcels.ParcelMessage{
 		Uuid:         res.Uuid,
 		TrackingCode: res.TrackingCode,
 		Name:         res.Name,
 		Origin:       res.Origin,
 		Destination:  res.Destination,
-		LastUpdate:   &latestState.Date,
-		Status:       &latestState.Status,
+		LastUpdate:   &lastState.Date,
+		Status:       &lastState.Status,
 		ZipCode:      res.ZipCode,
 	}
-	isDelivered := strings.Contains(latestState.Status, "Delivered")
-	parcelMessage.IsDone = &isDelivered
-	if job.checkDate(res.LastUpdate, &latestState.Date) {
+	//isDelivered := strings.Contains(lastState.Status, "Delivered")
+	//parcelMessage.IsDone = &isDelivered
+	if job.checkDate(res.LastUpdate, &lastState.Date) {
 		log.Printf("Saving new status...")
 		_, err := job.grpcService.SaveOrUpdateParcel(parcelMessage)
 		if err != nil {
