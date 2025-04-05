@@ -8,7 +8,7 @@ import (
 
 type ParcelService interface {
 	GetParcel(parcelReq *Request) (*Tracking, error)
-	GetLatestParcelState(parcelReq *Request) (*State, error)
+	GetParcelUpdates(parcelReq *Request) (*UpdateResponse, error)
 }
 
 type ParcelServiceImpl struct {
@@ -35,6 +35,11 @@ type Tracking struct {
 	Done      bool        `json:"done"`
 }
 
+type UpdateResponse struct {
+	State *State
+	Done  *bool
+}
+
 type ResponseError struct {
 	Error string `json:"error"`
 }
@@ -56,12 +61,16 @@ func (ps *ParcelServiceImpl) GetParcel(parcelReq *Request) (*Tracking, error) {
 	return jsonUnmarshal, nil
 }
 
-func (ps *ParcelServiceImpl) GetLatestParcelState(parcelReq *Request) (*State, error) {
+func (ps *ParcelServiceImpl) GetParcelUpdates(parcelReq *Request) (*UpdateResponse, error) {
 	response, err := ps.GetParcel(parcelReq)
 	if err != nil || len(response.Shipments) == 0 {
 		return nil, err
 	}
-	return &response.Shipments[len(response.Shipments)-1].LastState, nil
+	updateResponse := &UpdateResponse{
+		&response.Shipments[len(response.Shipments)-1].LastState,
+		&response.Done,
+	}
+	return updateResponse, nil
 }
 
 func getError(response []byte) error {

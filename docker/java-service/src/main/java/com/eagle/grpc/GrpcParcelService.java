@@ -55,7 +55,7 @@ public class GrpcParcelService extends ParcelsGrpc.ParcelsImplBase {
 
     @Override
     public void getParcelsInProgress(Empty request, StreamObserver<ParcelMessage> responseObserver) {
-        var parcels = parcelService.getAllParcels();
+        var parcels = parcelService.getAllParcelsInProgress();
         for (var parcel : parcels) {
             ParcelMessage response = getParcelMessage(parcel);
             responseObserver.onNext(response);

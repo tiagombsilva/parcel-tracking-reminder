@@ -11,9 +11,13 @@ import (
 type dummyGrpcService struct{}
 type dummyParcelService struct{}
 
-func (dps *dummyParcelService) GetLatestParcelState(parcelReq *external.Request) (*external.State, error) {
-	return &external.State{
-		Status: "ok",
+func (dps *dummyParcelService) GetParcelUpdates(parcelReq *external.Request) (*external.UpdateResponse, error) {
+	done := true
+	return &external.UpdateResponse{
+		State: &external.State{
+			Status: "ok",
+		},
+		Done: &done,
 	}, nil
 }
 func (dps *dummyParcelService) GetParcel(parcelReq *external.Request) (*external.Tracking, error) {
