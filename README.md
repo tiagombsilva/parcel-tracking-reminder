@@ -19,6 +19,6 @@
 
 docker-compose up
 
-## External API used for consumer
+## External API used
 
 https://parcelsapp.com/
